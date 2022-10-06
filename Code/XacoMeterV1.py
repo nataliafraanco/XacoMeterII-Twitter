@@ -1,10 +1,10 @@
-from flask import Flask
+from flask import Flask, render_template
 import tweepy
 import credencialesAPI
 from os import remove
 import os
 
-
+#Para saber donde buscar los archivos
 app = Flask(__name__)
 
 auth = tweepy.OAuth1UserHandler(
@@ -28,16 +28,15 @@ def BusquedaTweets(PalabraClave):
 			remove('./busqueda.txt')
 		
 		for tweet in tweets.data:
-			#f = open('./Redecilla.txt', 'a', encoding='utf-8')
-			f = open('./busqueda.txt', 'a', encoding='utf-8')
+			f = open('./busqueda.json', 'a', encoding='utf-8')
 			f.write(tweet.text + '\n')
 			f.close
 		return ("Los tweets están almacenados en busqueda.txt")
 
 
 @app.route("/")
-def index():
-	return ("Camino de Santiago")
+def home():
+	return render_template("home.html")
 
 @app.route("/Redecilla")
 def RedecillaDelCamino():
@@ -52,4 +51,9 @@ def Castildelgado():
 @app.route("/Belorado")
 def Belorado():
 	Resultado=BusquedaTweets("Castillo de Belorado")
+	return(Resultado)
+
+@app.route("/Belorado2")
+def Belorado2():
+	Resultado=BusquedaTweets("Belorado")
 	return(Resultado)
