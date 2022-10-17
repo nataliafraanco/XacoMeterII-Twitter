@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 import tweepy
-import credencialesAPI
+import credencialesAPITwitter
 from os import remove
 import os
 
@@ -8,19 +8,22 @@ import os
 app = Flask(__name__)
 
 auth = tweepy.OAuth1UserHandler(
-   credencialesAPI.API_KEY,
-   credencialesAPI.API_KEY_SECRET,
-   credencialesAPI.ACCESS_TOKEN,
-   credencialesAPI.ACCESS_TOKEN_SECRET
+  credencialesAPITwitter.API_KEY,
+   credencialesAPITwitter.API_KEY_SECRET,
+   credencialesAPITwitter.ACCESS_TOKEN,
+   credencialesAPITwitter.ACCESS_TOKEN_SECRET
 )
+#auth = tweepy.OAuthHandler(credencialesAPITwitter.API_KEY, credencialesAPITwitter.API_KEY_SECRET)
+#auth.set_access_token(credencialesAPITwitter.ACCESS_TOKEN, credencialesAPITwitter.ACCESS_TOKEN_SECRET)
 
 api = tweepy.API(auth)
-client = tweepy.Client (bearer_token = credencialesAPI.BEARER_TOKEN)
+client = tweepy.Client (bearer_token = credencialesAPITwitter.BEARER_TOKEN, consumer_key=credencialesAPITwitter.API_KEY,consumer_secret=credencialesAPITwitter.API_KEY_SECRET,access_token=credencialesAPITwitter.ACCESS_TOKEN,access_token_secret= credencialesAPITwitter.ACCESS_TOKEN_SECRET)
 
 def BusquedaTweets(PalabraClave):
 
-	#query = ('#%s -is:retweet lang:es', PalabraClave)
-	tweets = client.search_recent_tweets(query=PalabraClave, max_results=100) #+ client.search_recent_tweets(query=PalabraClave, max_results=100))
+	tweets = client.search_recent_tweets (query=PalabraClave)
+	#tweets = api.search_tweets(q="PalabraClave") 
+ 	#tweets = client.search_recent_tweets(query=PalabraClave, max_results=100))
 	if tweets.data == None:
 		return("No hay datos esta semana sobre la búsqueda")
 	else:
