@@ -1,14 +1,15 @@
 import pandas as pd #Para poder almacenar datos en dataframes
 #import pyodbc #Proporciona herramientas para conectarse a una base de datos SQL
-import credencialesAPITwitter
+import credencialesAPITwitterEducative
 import requests
 import json
 import csv
 import dateutil.parser
+import psycopg2
 
 
 def auth():
-    return credencialesAPITwitter.BEARER_TOKEN
+    return credencialesAPITwitterEducative.BEARER_TOKEN
 
 def create_headers(bearer_token):
     headers = {"Authorization": "Bearer {}".format(bearer_token)}
@@ -16,7 +17,7 @@ def create_headers(bearer_token):
 
 def create_url(keyword, max_results):
     
-    endpoint_url = "https://api.twitter.com/2/tweets/search/recent"
+    endpoint_url = "https://api.twitter.com/2/tweets/search/all"
 
     #change params based on the endpoint you are using
     query_parameters = {'query': keyword,

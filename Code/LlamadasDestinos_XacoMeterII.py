@@ -31,26 +31,10 @@ def CatedralBurgos():
     final_wordcloud = WordCloud(width = 800, height = 800, max_words=20,
                 background_color ='black', 
                 #stopwords = stop_words, 
-                min_font_size = 10).generate(comment_words)
-    #plt.figure(figsize = (5, 5), facecolor = None)
-    #plt.imshow(final_wordcloud)
-    #plt.show()
-    return ("El numero de tweets total almacenado es: "+ parseo)
-
-
-    #mask = np.array(image.open("letra_T.jpg"))
-    #mask[mask == 1] = 255
-    '''
-    your_list = []
-    with open('Catedral_Burgos.csv', 'rb') as f:
-        reader = csv.reader(f)
-        your_list = '\t'.join([i[5] for i in reader])
-        #background_color = "white", max_words = 50, mask = mask
-    wordcloud = wc().generate(your_list)
-    plt.imshow(wordcloud)
+                min_font_size = 1).generate(comment_words)
+    plt.figure(figsize = (5, 5), facecolor = None)
+    plt.imshow(final_wordcloud)
     plt.axis("off")
     plt.show()
-   
+    return ("El numero de tweets total almacenado es: "+ parseo)
 
-#def wCloud():
-    '''
