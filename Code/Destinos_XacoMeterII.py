@@ -1,3 +1,4 @@
+"""
 import FuncionPrincipal_XacoMeterII
 import InsertarDatosBD_XacoMeter
 
@@ -9,7 +10,7 @@ def CatedralBurgos():
     #Resultado=FuncionPrincipal_XacoMeterII.principal_function("Catedral Burgos")
     #totalTweetsInsertados = FuncionPrincipal_XacoMeterII.insert_data(Resultado, "Catedral_Burgos.csv")
     #parseo = str(totalTweetsInsertados)
-    """
+    
     data = pd.read_csv(r"Catedral_Burgos.csv", encoding ="UTF-8")
     comment_words=""
     for i in data:
@@ -27,6 +28,7 @@ def CatedralBurgos():
     plt.imshow(final_wordcloud)
     plt.axis("off")
     plt.show()
-    """
+    
     #return ("El numero de tweets total almacenado es: "+ parseo)
     return FuncionPrincipal_XacoMeterII.principal_function("Catedral Burgos")
+"""
