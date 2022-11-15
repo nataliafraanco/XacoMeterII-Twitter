@@ -16,12 +16,18 @@ app = Flask(__name__)
 def HOME ():
     if request.method=='POST':
         if request.form.get("RedecillaDelCamino"):
+            diccionarioPalabras="Redecilla camino rollo justicia"
+            Destinos_XacoMeterII.OperacionesBD(1,diccionarioPalabras,"RedecillaDelCamino")
             return ("Redecilla Del Camino")
         if request.form.get("Castildelgado"):
+            diccionarioPalabras="Castildelgado palacio fortificado"
+            Destinos_XacoMeterII.OperacionesBD(2,diccionarioPalabras,"Castildelgado")
             return ("Castildelgado")
         if request.form.get("Belorado"):
             return ("Belorado")
         if request.form.get("VillafrancaMontesDeOca"):
+            diccionarioPalabras="Villafranca san felix"
+            Destinos_XacoMeterII.OperacionesBD(4,diccionarioPalabras,"VillafrancaMontesDeOca")
             return ("Villafranca Montes De Oca")
         if request.form.get("SanJuanDeOrtega"):
             return ("San Juan de Ortega")
@@ -32,15 +38,15 @@ def HOME ():
         if request.form.get("Burgos"):
             return redirect("/Burgos")
         if request.form.get("Tardajos"):
-            return ("Tardajos")
+            return redirect("/Tardajos")
         if request.form.get("Hontanas"):
-            return ("Hontanas")
+            return redirect("/Hontanas")
         if request.form.get("Castrojeriz"):
-            return ("Castrojeriz")
+            return redirect("/Castrojeriz")
         if request.form.get("IteroDeLaVega"):
             return ("Itero De La Vega")
         if request.form.get("BoadillaDelCamino"):
-            return ("Boadilla Del Camino")
+            return redirect("/Boadilla Del Camino")
         if request.form.get("Fromista"):
             return ("Fromista")
         if request.form.get("VillacazarDeSirga"):
@@ -171,9 +177,59 @@ def Burgos():
         if request.form.get("TeatroPrincipal"):
             return ("Teatro Principal")
         if request.form.get("CatedralDeBurgos"):
-            return FuncionPrincipal_XacoMeterII.principal_function("Catedral Burgos")
-        
+            diccionarioPalabras="Catedral de Burgos"
+            resultado = Destinos_XacoMeterII.OperacionesBD(30,diccionarioPalabras)
+            return (resultado)
+
     return render_template('Burgos.html')
+
+@app.route("/Tardajos",methods=['GET','POST'])
+def Tardajos():
+    if request.method=='POST':
+        if request.form.get("Crucero"):
+            return ("Crucero")
+        if request.form.get("YacimientoDeDeobrigula"):
+            return ("Yacimiento de Deobrigula")
+    return render_template('Tardajos.html')
+
+@app.route("/Hontanas",methods=['GET','POST'])
+def Hontanas():
+    if request.method=='POST':
+        if request.form.get("Crucero"):
+            return ("Crucero")
+        if request.form.get("TorreonDeHontanas"):
+            return ("Torreon de Hontanas")
+    return render_template('Hontanas.html')
+
+@app.route("/Castrojeriz",methods=['GET','POST'])
+def Castrojeriz():
+    if request.method=='POST':
+        if request.form.get("LaVilla"):
+            return ("La Villa")
+        if request.form.get("ElFuerte"):
+            return ("Casa Guitiérrez Barona o El Fuerte")
+        if request.form.get("CastilloDeCastrojeriz"):
+            return ("Castillo de Castrojeriz")
+        if request.form.get("LaTorre"):
+            return ("La Torre")
+        if request.form.get("Murallas"):
+            return ("Murallas")
+        if request.form.get("IglesiaColegiataSantaMaríaDelManzano"):
+            return ("Iglesia Colegiata Santa María del Manzano")
+        if request.form.get("IglesiaDeSanJuan"):
+            return ("Iglesia de San Juan")
+    return render_template('Castrojeriz.html')
+
+@app.route("/BoadillaDelCamino",methods=['GET','POST'])
+def BoadillaDelCamino():
+    if request.method=='POST':
+        if request.form.get("CanalDeCastilla"):
+            return ("Canal de Castilla")
+        if request.form.get("IglesiaParroquialDeNuestraSeñoraDeLaAsuncion"):
+            return ("Iglesia parroquial de Nuestra Señora de la Asunción")
+        if request.form.get("RolloDeJusticiaDeLaVilla"):
+            return ("Rollo de Justicia de la Villa")
+    return render_template('BoadillaDelCamino.html')
     
 
 
