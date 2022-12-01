@@ -1,19 +1,26 @@
 from os import name
 import Destinos_XacoMeterII
 import FuncionPrincipal_XacoMeterII
+import credencialesAdmin
+import Busqueda_XacoMeterII
+import CrearTablasBD_XacoMeter
 from flask import Flask, render_template, request, redirect
+from flask_wtf import Form
+from wtforms.fields import DateField
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import image
 import csv
+import psycopg2
+import credencialesBD
 
 
 app = Flask(__name__)
 
 @app.route("/",methods=['GET','POST'])
-def HOME ():
+def home ():
     if request.method=='POST':
         if request.form.get("RedecillaDelCamino"):
             diccionarioPalabras="Redecilla camino rollo justicia"
@@ -177,9 +184,10 @@ def Burgos():
         if request.form.get("TeatroPrincipal"):
             return ("Teatro Principal")
         if request.form.get("CatedralDeBurgos"):
+            return ("Teatro Principal")
             diccionarioPalabras="Catedral de Burgos"
-            resultado = Destinos_XacoMeterII.OperacionesBD(30,diccionarioPalabras)
-            return (resultado)
+            #resultado = Destinos_XacoMeterII.OperacionesBD(30,diccionarioPalabras)
+            #return (resultado)
 
     return render_template('Burgos.html')
 
@@ -230,9 +238,69 @@ def BoadillaDelCamino():
         if request.form.get("RolloDeJusticiaDeLaVilla"):
             return ("Rollo de Justicia de la Villa")
     return render_template('BoadillaDelCamino.html')
+
+@app.route('/login')
+def Login():
+    return render_template('login.html')
+@app.route('/login', methods = ['POST'])
+def LoginComprobante():
+    usuario = request.form.get ('usuario')
+    contraseña = request.form.get ('contraseña')
+    if request.form.get('recordar'):
+        recordar = True
+    else:
+        recordar = False
+           
+    if ((usuario == credencialesAdmin.usuario) and (contraseña == credencialesAdmin.contraseña)):
+        return redirect("/Administrador")
     
+    else:
+        return ('Vuelva a intentarlo')
+    
+@app.route('/Administrador')
+def Administrador():
+    return render_template('admin.html')
+@app.route('/Administrador', methods = ['POST'])
+def AdministradorOpciones():
+    diccionarioBusqueda = Busqueda_XacoMeterII.palabrasClave()
+    if request.form.get('actualizar'):
+        for x, y in diccionarioBusqueda.items():
+            index = CrearTablasBD_XacoMeter.actualizaTablas(x)
+            print(index)
+            #Hacer conexion con la base de datos y si coincide el nombre del patrimonio con la base de datos coger ese index
+            Destinos_XacoMeterII.OperacionesBD(index, x, y)
+        return ("La base de datos ha sido actualizada")
+    if request.form.get('crear'):
+        return redirect ('/Administrador/CrearBaseDeDatos')
+@app.route('/Administrador/CrearBaseDeDatos')
+def eligeFecha():
+    calendario = CalendarioForm()
+    return render_template ("admin_Crear.html", form = calendario)
+@app.route('/Administrador/CrearBaseDeDatosFecha')
+def AdministradorCrear():
+    fecha = request.form["fechaElegida"]
+    diccionarioBusqueda = Busqueda_XacoMeterII.palabrasClave()
+    conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CONTRASEÑA)
+    curs = conn.cursor()
+    curs.execute('DROP TABLE IF EXISTS LISTADO_PATRIMONIOS CASCADE') 
+    curs.execute('DROP TABLE IF EXISTS TWEETS_PATRIMONIOS') 
+    conn.commit()
+    curs.close()
+    conn.close()
+    index = 1
+    for x, y in diccionarioBusqueda.items():
+        Destinos_XacoMeterII.OperacionesBD(index, x, y, fecha)
+        index += 1
 
-
+'''@app.route('/Administrador/CrearBaseDeDatosFecha', methods = ['POST'])
+def AdministradorCrearPost():
+    return("La base de datos ha sido creada correctamente ")
+    '''
+class CalendarioForm(Form):
+    fechaElegida = DateField ('DatePicker', format='yyyy-MM-DD')
+        
+        
+        
 
 
 

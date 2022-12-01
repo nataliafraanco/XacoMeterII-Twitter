@@ -1,7 +1,16 @@
 import psycopg2
 import credencialesBD
 import csv
+from os import remove
 
+def actualizaTablas(patrimonio):
+    conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CONTRASEÑA)
+    curs = conn.cursor()
+    buscaIndex = ('''SELECT Patrimonio_Id FROM LISTADO_PATRIMONIOS WHERE Patrimonio = %s''')
+    curs.execute(buscaIndex, [patrimonio])  
+    conn.commit()
+    curs.close()
+    conn.close()            
 def creaTablas(id, patrimonio):
     creaTablaPatrimonio = ('''CREATE TABLE IF NOT EXISTS LISTADO_PATRIMONIOS(Patrimonio_Id BIGINT PRIMARY KEY, Patrimonio TEXT);'''
                             )
@@ -51,8 +60,9 @@ def creaTablas(id, patrimonio):
     for row in readCSV:
               rowVariables = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]
               curs.execute(insertarTablaTweets, rowVariables)
-          
-
+    
+    csvFile.close()      
+    remove("C:/tmp/temporal.csv")
     #Guarda los cambios y cierra la conexion con la base de datos
     conn.commit()
     curs.close()

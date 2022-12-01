@@ -1,7 +1,6 @@
 #Archivos ocultos:
 
 #Credenciales de la API de Twitter
-credencialesAPITwitter.py
-Catedral_Burgos.csv
+credencialesAdmin.py
 credencialesBD.py
 credencialesAPITwitterEducative.py

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <center>
+    <h3 class="title">LOGIN ADMINISTRADOR</h3>
+    <div class="box">
+        <form method="POST" action="/login">
+            <div class="field">
+                <div class="control">
+                    <input class="input" type="text" name="usuario" placeholder="Administrador">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <input class="input" type="password" name="contraseña" placeholder="Contraseña">
+                </div>
+            </div>
+            <div class="field">
+                <label class="checkbox">
+                    <input type="checkbox" name="recordar">
+                    Recordar
+                </label>
+            </div>
+            <p><input type="submit" value="LOGIN" name="admin"/></p>
+            <!--<button class="button is-block is-info is-large is-fullwidth">Login</button>-->
+        </form>
+    </div>
+</center>
+</div>
+{% endblock %}
