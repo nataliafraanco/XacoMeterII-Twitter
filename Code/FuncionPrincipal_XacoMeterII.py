@@ -10,7 +10,7 @@ def auth():
 def accederEncabezados(bearer_token):
     return {"Authorization": "Bearer {}".format(bearer_token)}
 
-def solicitudURL(palabraClave, max_results, fecha):
+def solicitudURL(palabraClave, max_results, fecha, fechaFin):
     
     endpointUrl = "https://api.twitter.com/2/tweets/search/all"
 
@@ -18,6 +18,7 @@ def solicitudURL(palabraClave, max_results, fecha):
     parametrosBusqueda = {'query': palabraClave,
                     'max_results': max_results,
                     'start_time': fecha,
+                    'end_time': fechaFin,
                     'expansions': 'author_id,geo.place_id',
                     'tweet.fields': 'id,text,created_at,lang,public_metrics,geo',
                     'user.fields': 'username,verified',
@@ -35,14 +36,14 @@ def conexionEndpoint(url, headers, parameters, next_token = None):
     return response.json()
 
 #Definimos las variables y hacemos las llamadas a las funciones
-def funcionPrincipal(patrimonioId, PalabraClave, fecha):
+def funcionPrincipal(patrimonioId, PalabraClave, fecha, fechaFin):
     bearer_token = auth()
     headers = accederEncabezados(bearer_token)
     keyword = PalabraClave
     max_results = 500
-    url = solicitudURL(keyword, max_results, fecha)
+    url = solicitudURL(keyword, max_results, fecha, fechaFin)
     dict_tweets = conexionEndpoint(url[0], headers, url[1])
-    print(json.dumps(dict_tweets, indent=4, sort_keys=True))
+    #print(json.dumps(dict_tweets, indent=4, sort_keys=True))
     return insertarDatosCSV(patrimonioId, dict_tweets)
     
 #Creamos el fichero CSV y le rellenamos con la información
