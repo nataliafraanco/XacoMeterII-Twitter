@@ -53,7 +53,6 @@ def insertarDatosCSV(patrimonioId, diccionarioTweets):
     filepath = "C:/tmp/temporal.csv"
     csvFile = open(filepath , "a", newline="", encoding='utf-8')
     csvWriter = csv.writer(csvFile)
-    counter = 0
     #Sacamos la información del archivo json y la añadimos linea a linea al archivo CSV
     if ('data' in diccionarioTweets)  :
         for tweet, usuario in zip (diccionarioTweets['data'], diccionarioTweets['includes']['users']):
@@ -71,11 +70,8 @@ def insertarDatosCSV(patrimonioId, diccionarioTweets):
             like_count = tweet['public_metrics']['like_count']
             reply_count = tweet['public_metrics']['reply_count']
             lineaCSV = [patrimonioId, tweet_id, geo, lang, text, username, verified, retweet_count, like_count,reply_count, createdAt]
-            
             csvWriter.writerow(lineaCSV)
-            counter += 1
         #Cerramos el fichero CSV
         csvFile.close()
-        return counter
         
 

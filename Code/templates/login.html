@@ -1,32 +1,46 @@
-{% extends "base.html" %}
+{% extends "base2.html" %}
 
 {% block content %}
-<div class="column is-4 is-offset-4">
-    <center>
-    <h3 class="title">LOGIN ADMINISTRADOR</h3>
-    <div class="box">
+<body class="img-fluid" style="background-image: url({{ url_for('static', filename='images/fondoHome.jpg') }});background-size: cover; ">
+<div class="container py-4 col-md-8 offset-md-4">
+    <div class="row g-0 align-items-center">
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <div class="card cascading-right" style="
+            background: hsla(0, 0%, 100%, 0.55);
+            backdrop-filter: blur(30px);
+            ">
+        <div class="card-body p-5 shadow-5 text-center">
         <form method="POST" action="/login">
-            <div class="field">
+            <div class="img mb-3" >
+                <img src="{{url_for('static',filename='images/admin.png')}}" width=120px heigh=100px class="rounded-circle border border-dark"style="background-color: Silver">
+            </div>
+
+            <div class="form-outline mb-3">
                 <div class="control">
-                    <input class="input" type="text" name="usuario" placeholder="Administrador">
+                    <input class="form-control form-control-lg" type="text" name="usuario" placeholder="Administrador">
                 </div>
             </div>
 
-            <div class="field">
+            <div class="form-outline mb-2">
                 <div class="control">
-                    <input class="input" type="password" name="contraseña" placeholder="Contraseña">
+                    <input class="form-control form-control-lg" type="password" name="contraseña" placeholder="Contraseña">
                 </div>
             </div>
-            <div class="field">
+            <div class="form-check d-flex justify-content-center mb-2">
                 <label class="checkbox">
-                    <input type="checkbox" name="recordar">
-                    Recordar
+                    <input class="form-check-input" type="checkbox" name="recordar">
+                    Remember me
                 </label>
             </div>
-            <p><input type="submit" value="LOGIN" name="admin"/></p>
-            <!--<button class="button is-block is-info is-large is-fullwidth">Login</button>-->
+            <button type="submit" class="btn btn-primary btn-lg btn-block">
+                Sign in
+            </button>
+
         </form>
     </div>
-</center>
+    </div>
+    </div>
 </div>
+</div>
+
 {% endblock %}

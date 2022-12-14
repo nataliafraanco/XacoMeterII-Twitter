@@ -1,9 +1,7 @@
-{% extends "base.html" %}
+{% extends "base2.html" %}
 
 {% block content %}
-
-        <h1>XacoMeter II</h1>
-        <p>TFG - Natalia Franco Peciña</p>
+<body class="img-fluid" style="background-image: url({{ url_for('static', filename='images/fondoHome.jpg') }});background-size: cover; ">
         <center>
         <form method="post">
             <p><input type="submit" value="Actualizar datos" name="actualizar"/></p>

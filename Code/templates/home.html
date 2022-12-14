@@ -1,11 +1,225 @@
-{% extends "base.html" %}
+<style>
+    .desplegable{
+        height: 100px;
+    }
+    .home-img{
+        height: 800px;
+        width: 1550px;
+    }
+
+    .Burgos{
+        margin-left: 75.9%;
+        margin-top: 25.5%;
+    }
+    .RedecillaDelCamino{
+        margin-left: 92.9%;
+        margin-top: 23.5%;
+    }
+    .Castildelgado{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Belorado{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .VillafrancaMontesdeOca{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .SanJuandeOrtega{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Atapuerca{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .IbeasdeJuarros{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Tardajos{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Hontanas{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Castrojeriz{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .IterodelaVega{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .BoadilladelCamino{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Fromista{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .VillacazardeSirga{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .CarriondelosCondes{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .CervatosdelaCueza{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Villada{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .GrajaldeCampos{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Sahagun{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .MansilladelasMulas{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .VillamorosDeMansilla{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .VillaverdeDeSandoval{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Leon{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .TrobajodelCamino{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .SanAndresdelRabanedo{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .LaVirgenDelCamino{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .ValverdedelaVirgen{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .HospitaldeOrbigo{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .SanJustodelaVega{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Astorga{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .RabanalDelCamino{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Molinaseca{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Ponferrada{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Cacabelos{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .Pieros{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .VillafrancadelBierzo{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .VegadeValcarce{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .LaLaguna{
+        margin-left: 92.9%;
+        margin-top: 25.5%;
+    }
+    .alto{
+        width: 100%
+    }
+    .Ubicacion{
+        heigh:5px;
+    }
+
+</style>
+{% extends "base2.html" %}
 
 {% block content %}
+<!--
+<div class ="container-fluid">
+<div class="desplegable">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+      Dropdown button
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      <li><a class="dropdown-item" href="#">Action</a></li>
+      <li><a class="dropdown-item" href="#">Another action</a></li>
+      <li><a class="dropdown-item" href="#">Something else here</a></li>
+    </ul>
+  </div>
+</div>
+-->
+    <div class="container-fluid" style="background-image: url({{ url_for('static', filename='images/mapaCaminoCastillayLeon.png') }});background-size: cover; ">
+        <a class="btn bg-transparent Burgos" title="Burgos" href="{{ url_for('Burgos') }}" >
+            <img src="static/images/Ubicacion.png" height = "50"/>
+        </a>
+        <a class="btn bg-transparent RedecillaDelCamino" title="Redecilla del Camino" href="{{ url_for('Redecilla') }}" >
+            <img src="static/images/Ubicacion.png" height = "50"/>
+        </a>
+    </div>
+    <!--
+  </div>
+  <div class ="alto container-fluid"  style="background-image: url({{ url_for('static', filename='images/mapaCaminoCastillayLeon.png') }});background-size: cover;background-repeat: no-repeat;"> 
+    
+  <div class ="container-fluid"  style="background-image: url({{ url_for('static', filename='images/mapaCaminoCastillayLeon.png') }});background-size: cover;background-repeat: no-repeat; ">  
+    <a class="btn bg-transparent Burgos" title="Burgos" href="{{ url_for('Burgos') }}" height=2>
+        <img class="img-fluid" src="static/images/Ubicacion.png" height = "10"/>
+    </a>
+  </div>
+-->
+  
 
-        <h1>XacoMeter II</h1>
-        <p>TFG - Natalia Franco Peciña</p>
+
+
+    <!--
+        <body class="img-fluid" style="background-image: url({{ url_for('static', filename='images/mapaCamino.bmp') }});background-size: cover;background-repeat: no-repeat;">
+    <div class="container-fluid">
+        <button class="btn btn-primary" type="button" margin-left=50% margin-top=30%>Boton 1</button >
+        </button>
+    </div>
         <center>
+            <img src="static/images/mapaCamino.bmp" class="img-fluid" >
         <form method="post">
+
             <p><input type="submit" value="Redecilla Del Camino" id="linkBurgos" name="RedecillaDelCamino"/></p>
             <p><input type="submit" value="Castildelgado" id="linkLeon" name="Castildelgado"></p>
             <p><input type="submit" value="Belorado" id="linkBurgos" name="Belorado"/></p>
@@ -47,4 +261,5 @@
             <p><input type="submit" value="LaLaguna" id="linkBurgos" name="LaLaguna"/></p>
         </center>
         </form>
+        -->
 {% endblock %}

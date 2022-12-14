@@ -1,26 +1,25 @@
 from os import name
+import time
 import Destinos_XacoMeterII
 import FuncionPrincipal_XacoMeterII
 import credencialesAdmin
 import Busqueda_XacoMeterII
 import CrearTablasBD_XacoMeter
 from flask import Flask, render_template, request, redirect
-from flask_wtf import Form
-from wtforms.fields import DateField
-from wordcloud import WordCloud, STOPWORDS
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import image
-import csv
+from flask_bootstrap import Bootstrap
+from flask_login import LoginManager,login_required
 import psycopg2
 import credencialesBD
+import datetime
+from datetime import datetime,timedelta
 
 
 app = Flask(__name__)
+Bootstrap(app)
 
 @app.route("/",methods=['GET','POST'])
 def home ():
+
     if request.method=='POST':
         if request.form.get("RedecillaDelCamino"):
             diccionarioPalabras="Redecilla camino rollo justicia"
@@ -119,7 +118,9 @@ def Ibeas():
         if request.form.get("GPrincipalSalonDelCoro"):
             return ("Cueva Mayor_02_G. Principal Salón del Coro")
     return render_template('IbeasDeJuarros.html')
-        
+@app.route("/RedecillaDelCamino",methods=['GET','POST'])
+def Redecilla():     
+    return render_template('RedecillaDelCamino.html')   
 @app.route("/Burgos",methods=['GET','POST'])
 def Burgos():
     if request.method=='POST':
@@ -246,6 +247,8 @@ def Login():
 def LoginComprobante():
     usuario = request.form.get ('usuario')
     contraseña = request.form.get ('contraseña')
+    if request.form.get('home'):
+        return redirect("/")
     if request.form.get('recordar'):
         recordar = True
     else:
@@ -253,55 +256,86 @@ def LoginComprobante():
            
     if ((usuario == credencialesAdmin.usuario) and (contraseña == credencialesAdmin.contraseña)):
         return redirect("/Administrador")
-    
     else:
         return ('Vuelva a intentarlo')
     
 @app.route('/Administrador')
+#@login_required
 def Administrador():
     return render_template('admin.html')
 @app.route('/Administrador', methods = ['POST'])
+#@login_required
 def AdministradorOpciones():
     diccionarioBusqueda = Busqueda_XacoMeterII.palabrasClave()
     if request.form.get('actualizar'):
-        for x, y in diccionarioBusqueda.items():
-            index = CrearTablasBD_XacoMeter.actualizaTablas(x)
-            print(index)
-            #Hacer conexion con la base de datos y si coincide el nombre del patrimonio con la base de datos coger ese index
-            Destinos_XacoMeterII.OperacionesBD(index, x, y)
+        conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CONTRASEÑA)
+        curs = conn.cursor()
+        ultimaFecha = CrearTablasBD_XacoMeter.ultimaFecha2(conn,curs)[0][0]
+        ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
+        fechaActual = datetime.now()
+        fechaActual= fechaActual-timedelta(hours=1)
+        print(ultimaFecha)
+        Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs)
+        conn.commit()
+        curs.close()
+        conn.close()
         return ("La base de datos ha sido actualizada")
     if request.form.get('crear'):
-        return redirect ('/Administrador/CrearBaseDeDatos')
-@app.route('/Administrador/CrearBaseDeDatos')
-def eligeFecha():
-    calendario = CalendarioForm()
-    return render_template ("admin_Crear.html", form = calendario)
+        return redirect ('/Administrador/CrearBaseDeDatosFecha')
+
 @app.route('/Administrador/CrearBaseDeDatosFecha')
+def eligeFecha():
+    return render_template('admin_Crear.html')
+@app.route('/Administrador/CrearBaseDeDatosFecha',methods = ['POST'])
 def AdministradorCrear():
-    fecha = request.form["fechaElegida"]
-    diccionarioBusqueda = Busqueda_XacoMeterII.palabrasClave()
+    fechaElegida = request.form.get("fecha")
+    partes=fechaElegida.split("-")
+    fechaOrdenada="/".join(reversed(partes))
+    fechaElegida=datetime.strptime(fechaOrdenada,"%d/%m/%Y")
     conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CONTRASEÑA)
     curs = conn.cursor()
-    curs.execute('DROP TABLE IF EXISTS LISTADO_PATRIMONIOS CASCADE') 
-    curs.execute('DROP TABLE IF EXISTS TWEETS_PATRIMONIOS') 
+    #Hay varias opciones: la base de datos tiene datos y se pueden recuperar o no existen datos
+    primeraFecha=CrearTablasBD_XacoMeter.primeraFecha(conn,curs)[0][0]
+    primeraFecha=datetime(primeraFecha.year, primeraFecha.month, primeraFecha.day)
+    ultimaFecha=CrearTablasBD_XacoMeter.ultimaFecha2(conn,curs)[0][0]
+    ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
+    fechaActual = datetime.now()
+    fechaActual= fechaActual-timedelta(hours=1)
+    print(ultimaFecha)
+    print(fechaActual)
+    #Si no existen datos se crean de cero:
+    if primeraFecha==None:
+        index = 1
+        total = 0
+        diccionarioBusqueda = Busqueda_XacoMeterII.palabrasClave()
+        for x, y in diccionarioBusqueda.items():
+            total = Destinos_XacoMeterII.OperacionesBD(index, x, y, primeraFecha,ultimaFecha, total, conn, curs)
+            index += 1
+            if total == 299:
+                time.sleep(60*10)
+                total=0
+            print (total)
+        Destinos_XacoMeterII.buclePatrimonios(fechaElegida,fechaActual,conn,curs)
+        
+    #Si existen datos, para aumentar el rendimiento de la web y no tener que hacer tantas consultas a la API se reutilizan datos de la BBDD
+    elif primeraFecha<=fechaElegida>ultimaFecha:
+        CrearTablasBD_XacoMeter.borradoTablas(primeraFecha,fechaElegida,conn,curs)
+        Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs)
+        
+        
+    elif fechaElegida<primeraFecha:
+        Destinos_XacoMeterII.buclePatrimonios(fechaElegida,primeraFecha,conn,curs)
+        Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs)
+        
+
+    else:
+        CrearTablasBD_XacoMeter.borradoTablas(primeraFecha,fechaElegida,conn,curs)
+        Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs)
+        CrearTablasBD_XacoMeter.borradoTablas(ultimaFecha,fechaElegida,conn,curs)
+        
     conn.commit()
     curs.close()
-    conn.close()
-    index = 1
-    for x, y in diccionarioBusqueda.items():
-        Destinos_XacoMeterII.OperacionesBD(index, x, y, fecha)
-        index += 1
-
-'''@app.route('/Administrador/CrearBaseDeDatosFecha', methods = ['POST'])
-def AdministradorCrearPost():
-    return("La base de datos ha sido creada correctamente ")
-    '''
-class CalendarioForm(Form):
-    fechaElegida = DateField ('DatePicker', format='yyyy-MM-DD')
-        
-        
-        
-
-
+    conn.close()    
+    return render_template('admin_exitoso.html')
 
 

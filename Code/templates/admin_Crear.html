@@ -1,8 +1,8 @@
 <table>
     <tr>
-        <form action = "{{url_for ('AdministradorCrear')}}" method ='POST'>
-            <td>{{ form.fechaElegida(class=datepicker)}}
-            <input type ="submit" value="fechaElegida"/>
+        <form method ='POST' action = "/Administrador/CrearBaseDeDatosFecha" >
+            <input type="date" value="fecha" name="fecha">
+            <input type ="submit" value="Guardar"/>
         </form>
     </tr>
 </table>
