@@ -10,20 +10,20 @@
             backdrop-filter: blur(30px);
             ">
         <div class="card-body p-5 shadow-5 text-center">
-        <form method="POST" action="/login">
+        <form method="POST" action="/Login">
             <div class="img mb-3" >
                 <img src="{{url_for('static',filename='images/admin.png')}}" width=120px heigh=100px class="rounded-circle border border-dark"style="background-color: Silver">
             </div>
 
             <div class="form-outline mb-3">
                 <div class="control">
-                    <input class="form-control form-control-lg" type="text" name="usuario" placeholder="Administrador">
+                    <input class="form-control form-control-lg" type="text" name="usuario" placeholder="Usuario" required>
                 </div>
             </div>
 
             <div class="form-outline mb-2">
                 <div class="control">
-                    <input class="form-control form-control-lg" type="password" name="contraseña" placeholder="Contraseña">
+                    <input class="form-control form-control-lg" type="password" name="contraseña" placeholder="Contraseña" required>
                 </div>
             </div>
             <div class="form-check d-flex justify-content-center mb-2">
@@ -32,10 +32,9 @@
                     Remember me
                 </label>
             </div>
-            <button type="submit" class="btn btn-primary btn-lg btn-block">
-                Sign in
+            <button type="submit" class="btn btn-primary btn-lg btn-block" href="{{url_for('Login')}}">
+                Iniciar sesión
             </button>
-
         </form>
     </div>
     </div>

@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">
-        <img src="static/images/conchaLogo.png"  width="60" height="60" class="d-inline-block align-text-top" href="#">
+        <img src="{{ url_for('static',filename='images/conchaLogo.png')}}"  width="60" height="60" class="d-inline-block align-text-top" href="#">
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -16,13 +16,15 @@
             <button class="btn btn-outline-success" type="submit">Search</button>
           </form>
         </ul>
+        
         <ul class="navbar-nav ml-auto" >
         <li class="nav-item">
-            <a class="nav-link active float-right" aria-current="page" href="{{ url_for('Login') }}" >
-              Log in
+            <a class="nav-link active float-right" aria-current="page" href="{{ url_for('AdministradorOpciones') }}" >
+              <img src="{{url_for('static',filename='images/adminBarra.png')}}" width='60' heigh='60' tittle="Administrador" >
             </a>
         </li>
-        </ul>
+      
+          </ul>
       </div>
     </div>
   </nav>

@@ -174,25 +174,12 @@
 {% extends "base2.html" %}
 
 {% block content %}
-<!--
-<div class ="container-fluid">
-<div class="desplegable">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-      Dropdown button
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-      <li><a class="dropdown-item" href="#">Action</a></li>
-      <li><a class="dropdown-item" href="#">Another action</a></li>
-      <li><a class="dropdown-item" href="#">Something else here</a></li>
-    </ul>
-  </div>
-</div>
--->
+
     <div class="container-fluid" style="background-image: url({{ url_for('static', filename='images/mapaCaminoCastillayLeon.png') }});background-size: cover; ">
         <a class="btn bg-transparent Burgos" title="Burgos" href="{{ url_for('Burgos') }}" >
             <img src="static/images/Ubicacion.png" height = "50"/>
         </a>
-        <a class="btn bg-transparent RedecillaDelCamino" title="Redecilla del Camino" href="{{ url_for('Redecilla') }}" >
+        <a class="btn bg-transparent RedecillaDelCamino" title="Burgos" href="{{ url_for('Burgos') }}" >
             <img src="static/images/Ubicacion.png" height = "50"/>
         </a>
     </div>
