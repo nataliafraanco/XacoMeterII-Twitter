@@ -1,252 +1,55 @@
-<style>
-    .desplegable{
-        height: 100px;
-    }
-    .home-img{
-        height: 800px;
-        width: 1550px;
-    }
-
-    .Burgos{
-        margin-left: 75.9%;
-        margin-top: 25.5%;
-    }
-    .RedecillaDelCamino{
-        margin-left: 92.9%;
-        margin-top: 23.5%;
-    }
-    .Castildelgado{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Belorado{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .VillafrancaMontesdeOca{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .SanJuandeOrtega{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Atapuerca{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .IbeasdeJuarros{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Tardajos{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Hontanas{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Castrojeriz{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .IterodelaVega{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .BoadilladelCamino{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Fromista{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .VillacazardeSirga{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .CarriondelosCondes{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .CervatosdelaCueza{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Villada{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .GrajaldeCampos{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Sahagun{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .MansilladelasMulas{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .VillamorosDeMansilla{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .VillaverdeDeSandoval{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Leon{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .TrobajodelCamino{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .SanAndresdelRabanedo{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .LaVirgenDelCamino{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .ValverdedelaVirgen{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .HospitaldeOrbigo{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .SanJustodelaVega{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Astorga{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .RabanalDelCamino{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Molinaseca{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Ponferrada{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Cacabelos{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .Pieros{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .VillafrancadelBierzo{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .VegadeValcarce{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .LaLaguna{
-        margin-left: 92.9%;
-        margin-top: 25.5%;
-    }
-    .alto{
-        width: 100%
-    }
-    .Ubicacion{
-        heigh:5px;
-    }
-
-</style>
-{% extends "base2.html" %}
-
-{% block content %}
-
-    <div class="container-fluid" style="background-image: url({{ url_for('static', filename='images/mapaCaminoCastillayLeon.png') }});background-size: cover; ">
-        <a class="btn bg-transparent Burgos" title="Burgos" href="{{ url_for('Burgos') }}" >
-            <img src="static/images/Ubicacion.png" height = "50"/>
-        </a>
-        <a class="btn bg-transparent RedecillaDelCamino" title="Burgos" href="{{ url_for('Burgos') }}" >
-            <img src="static/images/Ubicacion.png" height = "50"/>
-        </a>
-    </div>
-    <!--
-  </div>
-  <div class ="alto container-fluid"  style="background-image: url({{ url_for('static', filename='images/mapaCaminoCastillayLeon.png') }});background-size: cover;background-repeat: no-repeat;"> 
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" href="static/images/conchaLogo.png" type="image/png">
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <link rel="stylesheet" href="static/fontawesome/css/fontawesome.min.css">
+        <title>XacoMeterII</title>
+        {%include 'barraNavegacion.html'%} 
+        <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
+        
+      </head>
     
-  <div class ="container-fluid"  style="background-image: url({{ url_for('static', filename='images/mapaCaminoCastillayLeon.png') }});background-size: cover;background-repeat: no-repeat; ">  
-    <a class="btn bg-transparent Burgos" title="Burgos" href="{{ url_for('Burgos') }}" height=2>
-        <img class="img-fluid" src="static/images/Ubicacion.png" height = "10"/>
-    </a>
-  </div>
--->
-  
-
-
-
-    <!--
-        <body class="img-fluid" style="background-image: url({{ url_for('static', filename='images/mapaCamino.bmp') }});background-size: cover;background-repeat: no-repeat;">
-    <div class="container-fluid">
-        <button class="btn btn-primary" type="button" margin-left=50% margin-top=30%>Boton 1</button >
-        </button>
-    </div>
+      <body>
+        
         <center>
-            <img src="static/images/mapaCamino.bmp" class="img-fluid" >
-        <form method="post">
+        <h2>Localizaciones del patrimonio cultural del Camino de Santiago</h2>
+        
+        </script>
+        <div>{{ubicaciones[0]}}</div>
+        <div id="map" style="height: 500px; width: 800px;"></div>
+        
+        <script type="text/javascript">
+            
+              // Crear un mapa y especificar su div contenedor y opciones
+              var map = L.map('map', {
+                center: [42.37014,-5.030849],
+                zoom: 8,
+                // Añadir capas al mapa
+                
+              });
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+               maxZoom: 18
+              }).addTo(map);
 
-            <p><input type="submit" value="Redecilla Del Camino" id="linkBurgos" name="RedecillaDelCamino"/></p>
-            <p><input type="submit" value="Castildelgado" id="linkLeon" name="Castildelgado"></p>
-            <p><input type="submit" value="Belorado" id="linkBurgos" name="Belorado"/></p>
-            <p><input type="submit" value="VillafrancaMontesDeOca" id="linkLeon" name="VillafrancaMontesDeOca"/></p>
-            <p><input type="submit" value="SanJuanDeOrtega" id="linkBurgos" name="SanJuanDeOrtega"/></p>
-            <p><input type="submit" value="Atapuerca" id="linkLeon" name="Atapuerca"/></p>
-            <p><input type="submit" value="IbeasDeJuarros" id="linkBurgos" name="IbeasDeJuarros"/></p>
-            <p><input type="submit" value="Burgos" id="linkLeon" name="Burgos"/></p>
-            <p><input type="submit" value="Tardajos" id="linkBurgos" name="Tardajos"/></p>
-            <p><input type="submit" value="Hontanas" id="linkLeon" name="Hontanas"/></p>
-            <p><input type="submit" value="Castrojeriz" id="linkBurgos" name="Castrojeriz"/></p>
-            <p><input type="submit" value="IteroDeLaVega" id="linkLeon" name="IteroDeLaVega"/></p>
-            <p><input type="submit" value="BoadillaDelCamino" id="linkBurgos" name="BoadillaDelCamino"/></p>
-            <p><input type="submit" value="Fromista" id="linkLeon" name="Fromista"/></p>
-            <p><input type="submit" value="VillacazarDeSirga" id="linkBurgos" name="VillacazarDeSirga"/></p>
-            <p><input type="submit" value="CarrionDeLosCondes" id="linkLeon" name="CarrionDeLosCondes"/></p>
-            <p><input type="submit" value="CervatosDeLaCueza" id="linkBurgos" name="CervatosDeLaCueza"/></p>
-            <p><input type="submit" value="Villada" id="linkLeon" name="Villada"/></p>
-            <p><input type="submit" value="GrajalDeCampos" id="linkBurgos" name="GrajalDeCampos"/></p>
-            <p><input type="submit" value="Sahagun" id="linkLeon" name="Sahagun"/></p>
-            <p><input type="submit" value="MansillaDeLasMulas" id="linkBurgos" name="MansillaDeLasMulas"/></p>
-            <p><input type="submit" value="VillamorosDeMansilla" id="linkLeon" name="VillamorosDeMansilla"/></p>
-            <p><input type="submit" value="VillaverdeDeSandoval" id="linkBurgos" name="VillaverdeDeSandoval"/></p>
-            <p><input type="submit" value="Leon" id="linkLeon" name="Leon"/></p>
-            <p><input type="submit" value="TrobajoDelCamino" id="linkBurgos" name="TrobajoDelCamino"/></p>
-            <p><input type="submit" value="SanAndresDelRabanedo" id="linkLeon" name="SanAndresDelRabanedo"/></p>
-            <p><input type="submit" value="LaVirgenDelCamino" id="linkBurgos" name="LaVirgenDelCamino"/></p>
-            <p><input type="submit" value="ValverdeDeLaVirgen" id="linkLeon" name="ValverdeDeLaVirgen"/></p>
-            <p><input type="submit" value="HospitalDeOrbigo" id="linkBurgos" name="HospitalDeOrbigo"/></p>
-            <p><input type="submit" value="SanJustoDeLaVega" id="linkLeon" name="SanJustoDeLaVega"/></p>
-            <p><input type="submit" value="Astorga" id="linkBurgos" name="Astorga"/></p>
-            <p><input type="submit" value="RabanalDelCamino" id="linkLeon" name="RabanalDelCamino"/></p>
-            <p><input type="submit" value="MolinaSeca" id="linkBurgos" name="MolinaSeca"/></p>
-            <p><input type="submit" value="Ponferrada" id="linkLeon" name="Ponferrada"/></p>
-            <p><input type="submit" value="Cacabelos" id="linkBurgos" name="Cacabelos"/></p>
-            <p><input type="submit" value="Pieros" id="linkLeon" name="Pieros"/></p>
-            <p><input type="submit" value="VillafrancaDelBierzo" id="linkBurgos" name="VillafrancaDelBierzo"/></p>
-            <p><input type="submit" value="VegaDeValcarce" id="linkLeon" name="VegaDeValcarce"/></p>
-            <p><input type="submit" value="LaLaguna" id="linkBurgos" name="LaLaguna"/></p>
-        </center>
-        </form>
-        -->
-{% endblock %}
+              var contador={{marcadores}}.length
+              for (var i = 0; i < contador; i++) {
+                latitud={{marcadores}}[i][0]
+                longitud={{marcadores}}[i][1]
+                //denominacion={{ubicaciones}}
+                var marker = L.marker([latitud,longitud]).addTo(map)
+                //marker.bindPopup(denominacion);
+                .bindPopup(`<b>${denominacion}</b>`);
+                };
+              
+          </script>
+          
+        </center> 
+        
+      </body>
+    </html>

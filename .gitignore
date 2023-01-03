@@ -1,6 +1,7 @@
 #Archivos ocultos:
 
 #Credenciales de la API de Twitter
-credencialesAdmin.py
+credencialesAPIGoogle.py
 credencialesBD.py
 credencialesAPITwitterEducative.py
+
