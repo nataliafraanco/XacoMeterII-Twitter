@@ -49,33 +49,83 @@ def ultimaFecha2(conn, curs):
     return ultimafecha
 
 def cuentaDatos(conn, curs, fecha, patrimonio):
-    cuentaTweets =['''SELECT COUNT (*) FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
+    cuentaTweets =('''SELECT COUNT (*) FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
                    ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
-                   WHERE LISTADO_PATRIMONIOS.Patrimonio = %s AND TWEETS_PATRIMONIOS.Tweet_CreatedAt = %s''']
+                   WHERE LISTADO_PATRIMONIOS.Patrimonio = %s AND TWEETS_PATRIMONIOS.Tweet_CreatedAt = %s''')
     variables = patrimonio, fecha
-    print(variables)
-    curs.execute(*cuentaTweets, variables)
+    curs.execute(cuentaTweets, variables)
     numeroDatos = curs.fetchone()
-    print("Total datos", numeroDatos)
     return numeroDatos
 
 def cuentaFilas(conn,curs,fechaIni, fechaFin):
-    cuentaFilas=['''SELECT COUNT(*) FROM TWEETS_PATRIMONIOS 
-                 WHERE Tweet_CreatedAt BETWEEN (fechaIni, fechaFin)''']
+    cuentaFilas=('''SELECT COUNT(*) FROM TWEETS_PATRIMONIOS 
+                 WHERE Tweet_CreatedAt BETWEEN %s AND %s''')
     variables = fechaIni, fechaFin
-    print(variables)
-    curs.execute(*cuentaFilas, variables)
+    curs.execute(cuentaFilas, variables)
     numeroDatos = curs.fetchone()
     return numeroDatos
 
+
+
+def cuentaLikes(conn,curs,fecha, patrimonio):
+    cuentaLikes=('''SELECT Like_Count FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
+                    ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
+                    WHERE TWEETS_PATRIMONIOS.Tweet_Texto NOT LIKE %s AND LISTADO_PATRIMONIOS.Patrimonio = %s AND
+                    TWEETS_PATRIMONIOS.Tweet_CreatedAt = %s''')
+    variables = 'RT', patrimonio, fecha
+    curs.execute(cuentaLikes, variables)
+    numeroDatos = curs.fetchall()
+    soloValor=[]
+    if numeroDatos==None:
+        numeroDatos=0
+        return numeroDatos
+    else:
+        for dato in numeroDatos:
+            soloValor.append(dato[0])
+        return sum(soloValor)
+
+def cuentaReply(conn,curs,fecha, patrimonio):
+    cuentaReply=('''SELECT Reply_Count FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
+                    ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
+                    WHERE TWEETS_PATRIMONIOS.Tweet_Texto NOT LIKE %s AND LISTADO_PATRIMONIOS.Patrimonio = %s AND
+                    TWEETS_PATRIMONIOS.Tweet_CreatedAt = %s''')
+    variables = 'RT%', patrimonio, fecha 
+    curs.execute(cuentaReply, variables)
+    numeroDatos = curs.fetchall()
+    soloValor=[]
+    if numeroDatos==None:
+        numeroDatos=0
+        return numeroDatos
+    else:
+        for dato in numeroDatos:
+            soloValor.append(dato[0])
+        return sum(soloValor)
+
+def cuentaRetweet(conn,curs,fecha, patrimonio):
+    cuentaRetweet=('''SELECT Retweet_Count FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
+                    ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
+                    WHERE TWEETS_PATRIMONIOS.Tweet_Texto NOT LIKE %s AND LISTADO_PATRIMONIOS.Patrimonio = %s AND
+                    TWEETS_PATRIMONIOS.Tweet_CreatedAt = %s''')
+    variables = 'RT%', patrimonio, fecha
+    curs.execute(cuentaRetweet, variables)
+    numeroDatos = curs.fetchall()
+    soloValor=[]
+    if numeroDatos==None:
+        numeroDatos=0
+        return numeroDatos
+    else:
+        for dato in numeroDatos:
+            soloValor.append(dato[0])
+        return sum(soloValor)
+        
+
 def cuentaFilasPatrimonio(conn,curs,fechaIni, fechaFin, patrimonio):
-    cuentaFilas=['''SELECT COUNT(*) FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
+    cuentaFilas=('''SELECT COUNT(*) FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
                     ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
                     WHERE LISTADO_PATRIMONIOS.Patrimonio = %s AND
-                    TWEETS_PATRIMONIOS.Tweet_CreatedAt BETWEEN (fechaIni, fechaFin) and ''']
-    variables = fechaIni, fechaFin, patrimonio
-    print(variables)
-    curs.execute(*cuentaFilas, variables)
+                    TWEETS_PATRIMONIOS.Tweet_CreatedAt BETWEEN %s AND %s ''')
+    variables = patrimonio, fechaIni, fechaFin 
+    curs.execute(cuentaFilas, variables)
     numeroDatos = curs.fetchone()
     return numeroDatos
 

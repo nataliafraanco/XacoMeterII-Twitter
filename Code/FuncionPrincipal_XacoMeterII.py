@@ -3,6 +3,8 @@ import requests
 import json
 import csv
 import dateutil.parser
+import logging
+from datetime import datetime
 
 def auth():
     return credencialesAPITwitterEducative.BEARER_TOKEN
@@ -32,6 +34,17 @@ def conexionEndpoint(url, headers, parameters, next_token = None):
     parameters['next_token'] = next_token  
     response = requests.request("GET", url, headers = headers, params = parameters)
     if response.status_code != 200:
+        if response.status_code == 400:
+            logging.error(f'{datetime.now()} - Twitter - Solicitud no valida')       
+        elif response.status_code == 401:
+            logging.error(f'{datetime.now()} - Twitter - Error de autenticacion')        
+        elif response.status_code == 403:
+            logging.error(f'{datetime.now()} - Twitter - Acceso denegado')        
+        elif response.status_code == 429:
+            logging.error(f'{datetime.now()} - Twitter - Solicitudes permitidas superadas')      
+        else:
+            logging.error(f'{datetime.now()} - Error de servidor')
+
         raise Exception(response.status_code, response.text)
     return response.json()
 

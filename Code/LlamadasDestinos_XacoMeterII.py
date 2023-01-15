@@ -1,61 +1,39 @@
+from flask import Flask, render_template, request, redirect, session, flash, url_for, make_response, send_file, get_flashed_messages
+import os
 from os import name
 import time
 import Destinos_XacoMeterII
 import Busqueda_XacoMeterII
 import CrearTablasBD_XacoMeterII
 import GraficosEstadisticas_XacoMeterII
-from flask import Flask, render_template, request, redirect, session, flash, url_for
+import logging
 import psycopg2
 import psycopg2.extras
 import credencialesBD
 import datetime
 from datetime import datetime,timedelta
 from werkzeug.security import check_password_hash
-import folium
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import io
-import base64
-import csv
-import pandas as pd
-import itertools
+
+from subprocess import Popen
+
 app = Flask(__name__)
-app.secret_key = 'Secret_key'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta (minutes = 30)
-#app.config['GOOGLEMAPS_KEY'] = credencialesAPIGoogle.claveAPIGoogle
+app.secret_key = 'Clave muy secreta sin revelacion'
 DEBUG = False
 PORT = 5000
-#GoogleMaps(app)
 
 @app.route("/")
 def home():
     localidades=datosMapa()
-    mapaLocalidades = folium.Map(
-        zoom_start=8,
-        # Mapa centrado en Sahagun
-        location=[42.37014,-5.030849],
-          
-    )
-
     marcadores=[]
     ubicaciones=[]
     for i in localidades.index:
-        
-        location=[localidades.loc[i,'latitud'], localidades.loc[i,'longitud']]
-        ubicacion=localidades.loc[i,'denominacion']
-        #marcador = folium.Marker(location, popup = cajaInformacion(localidades.loc[i,'denominacion']))
-        marcadores.append(location)
-        ubicaciones.append(ubicacion)
-        print(ubicaciones[0])       
-       
-    return render_template('home.html', marcadores = marcadores, ubicaciones=ubicaciones, map=mapaLocalidades,localidades=localidades)
-
-@app.route("/Burgos",methods=['GET','POST'])
-def Burgos():
-    return render_template('Burgos.html')
-
+        marcadores.append([localidades.loc[i,'latitud'], localidades.loc[i,'longitud']])
+        ubicaciones.append(localidades.loc[i,'denominacion'])  
+    ubicacionesLista = [x.replace("'",' ') for x in ubicaciones]
+    print(ubicaciones[0])
+    print(ubicacionesLista)
+    return render_template('home.html', marcadores = marcadores, ubicaciones=ubicacionesLista)
 
 @app.route('/Login', methods = ['GET','POST'])
 def Login():
@@ -63,7 +41,6 @@ def Login():
     curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if ('usuario' and 'contraseña') in request.form:
         usuario = request.form.get ('usuario')
-        print(usuario)
         contraseña = request.form.get ('contraseña')
         query = ('''SELECT * FROM usuarios WHERE username = %s''')
         curs.execute(query, [usuario])    
@@ -72,6 +49,8 @@ def Login():
             contraseñabd = datos['password']
             if check_password_hash(contraseñabd, contraseña):
                 session['identificado'] = True
+                session.permanent = False
+                app.permanent_session_lifetime = timedelta(minutes=30)
                 return redirect(url_for('AdministradorOpciones'))
         else:
             flash("Usuario o contraseña incorrectos. Vuelva a intentarlo.")
@@ -114,7 +93,7 @@ def AdministradorActualizar():
         conn.commit()
         curs.close()
         conn.close()
-        return redirect('/home')
+        return redirect(url_for('AdministradorOpciones'))
     else:
         return redirect (url_for('Login'))
 
@@ -140,6 +119,7 @@ def AdministradorCrear():
         fechaActual = datetime.now()
         fechaActual= fechaActual-timedelta(hours=1)
         #Si no existen datos se crean de cero:
+
         if primeraFecha==None:
             index = 1
             total = 0
@@ -150,7 +130,6 @@ def AdministradorCrear():
                 if total == cantDatos:
                     time.sleep(tiempoCantidad)
                     total=0
-                print (total)
             conn.commit()
             curs.close()
             conn.close() 
@@ -158,12 +137,6 @@ def AdministradorCrear():
             primeraFecha=datetime(primeraFecha.year, primeraFecha.month, primeraFecha.day)
             ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
             total = 0
-            print("---------")
-            print(cantDatos)
-            print(tiempoCantidad)
-            print(tiempoDia)
-            print(ultimaFecha)
-            print(fechaActual)
         
             #Si existen datos, para aumentar el rendimiento de la web y no tener que hacer tantas consultas a la API se reutilizan datos de la BBDD
             if primeraFecha<=fechaElegida<ultimaFecha:
@@ -192,23 +165,77 @@ def AdministradorCrear():
                 curs.close()
                 conn.close()
         flash('La base de datos ha sido creada correctamente')
-        return redirect (url_for('home'))
+        return redirect(url_for('AdministradorOpciones'))
+
     else:
         return redirect (url_for('Login'))
-    
+
+
 @app.route('/estadisticasTemporales/<string:patrimonio>')    
 def estadisticasTemporales(patrimonio):
-    graficoBarras=GraficosEstadisticas_XacoMeterII.graficoBarras(patrimonio)
-    graficoCircular=GraficosEstadisticas_XacoMeterII.graficoCircularTotal(patrimonio)
-    return render_template('serieTemporal.html', graficoBarras=graficoBarras, graficoCircular=graficoCircular)
+    try:
+        conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CONTRASEÑA)
+        curs = conn.cursor()
+        primeraFecha = request.args.get('fechaInicio')
+        ultimaFecha = request.args.get('fechaFin')
+        if primeraFecha==None or len(primeraFecha)==None:
+            primeraFecha=CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)[0][0]
+        else:
+            primeraFecha = datetime.strptime(primeraFecha, "%Y-%m-%d")
+        if ultimaFecha==None or len(ultimaFecha)==None:
+            ultimaFecha=CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
+        else:
+            ultimaFecha = datetime.strptime(ultimaFecha, "%Y-%m-%d")
+        graficoTemporal=GraficosEstadisticas_XacoMeterII.graficoTemporal(patrimonio, primeraFecha, ultimaFecha, conn, curs)
+        graficoCircular=GraficosEstadisticas_XacoMeterII.graficoCircularTotal(patrimonio, primeraFecha, ultimaFecha, conn, curs)
+        graficoMetricasPublicas=GraficosEstadisticas_XacoMeterII.graficoMetricasPublicas(patrimonio, primeraFecha, ultimaFecha, conn, curs)
+        html = render_template('serieTemporal.html', graficoTemporal=graficoTemporal, graficoCircular=graficoCircular, graficoMetricasPublicas=graficoMetricasPublicas)
+        with open('temp.html', 'w') as f:
+            f.write(html)
+        p = Popen(['C:\\tmp\\wkhtmltopdf\\bin\\wkhtmltopdf.exe','--enable-local-file-access','--no-background','temp.html', 'outputPDF.pdf'])
+        p.wait()
+        os.remove('temp.html')
+        return render_template('serieTemporal.html', graficoTemporal=graficoTemporal, graficoCircular=graficoCircular, graficoMetricasPublicas=graficoMetricasPublicas)
+    except Exception as e:
+        flash('Ha ocurrido una excepcion mientras se intentaban realizar las estadísticas')
+        logging.error(f'{datetime.now()} - {e}')     
+        return redirect(url_for('home'))
+    
+@app.route('/logErrores')
+def LogErrores():
+    try:
+        return send_file('errores.log', attachment_file='errores.log')
+    except:
+        flash('Ha ocurrido una excepcion mientras se intentaba descargar el archivo')
+        return redirect(request.referrer)
+       
+@app.route('/descargaPDF', methods=['POST'])
+def descarga():
+    with open('outputPDF.pdf', 'rb') as f:
+        pdf = f.read()
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'attachment; filename=estadisticasTemporales.pdf'
+    return response
+
+class ExceptionFilter(logging.Filter):
+    def filter(self, record):
+        return record.levelno >= logging.WARNING
+    
+error_filter = ExceptionFilter()
+file_handler = logging.FileHandler(filename='errores.log')
+file_handler.addFilter(error_filter)
+logging.getLogger().addHandler(file_handler)
+
+@app.errorhandler(Exception)
+def handle_generic_error(error):
+    logging.error(f'{datetime.now()} - APP ERROR - {error}')
+    return '<script>alert("Ha ocurrido un error en la aplicacion");</script>', 500
 
 def datosMapa():
     locations=pd.read_csv('.\data\inventario_01.csv',sep=';',index_col=0)   
     return locations
 
-def cajaInformacion(localidad):
-    link = "<b>%s</b><br><a href='/estadisticasTemporales/%s' target='_blank'>Estadisticas temporales</a>" % (localidad, localidad.replace(' ','+'))
-    return link
 
 if __name__ == '__main__':
     app.run(port = PORT, debug = DEBUG)

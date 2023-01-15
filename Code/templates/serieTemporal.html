@@ -1,6 +1,33 @@
 {% extends "base2.html" %}
-
 {% block content %}
-<img src="data:image/png;base64, {{ graficoBarras }}">
-<img src="data:image/png;base64, {{ graficoCircular }}">
-{% endblock %}
+        <div class="container">
+            <div class="row center-form">
+                <form >
+                    Fecha Inicio: <input type="date" name="fechaInicio">
+                    Fecha Fin: <input type="date" name="fechaFin">
+                    <input type="submit" value="Buscar">
+                </form>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <img  class="img-fluid" src="data:image/png;base64, {{ graficoTemporal }}">
+              </div>
+              <div class="col-6">
+                <img  class="img-fluid" src="data:image/png;base64, {{ graficoCircular }}">
+              </div>
+            </div>
+            <div class="row">
+                  <img  class="img-fluid" src="data:image/png;base64, {{ graficoMetricasPublicas }}">
+              </div>
+            <div class="row" align="right">
+                <form action=" " method="post" class="float-left">
+                    <button type="submit" class="btn btn-secondary">Volver</button>
+                </form>
+                <form action="/descargaPDF" method="post" class="float-right">
+                    <button type="submit" class="btn btn-secondary">Descarga en PDF</button>
+                </form>
+               
+            </div>
+        </div>
+        {% endblock %}
+

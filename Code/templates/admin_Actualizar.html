@@ -1,7 +1,7 @@
 {% extends "base2.html" %}
 
 {% block content %}
-<body class="img-fluid" style="background-image: url({{ url_for('static', filename='images/fondoHome.jpg') }});background-size: cover; ">
+<body class="img-fluid" style="background-image: url({{ url_for('static', filename='ImagenesCodigo/033-1748-10.png') }});background-size: cover; ">
     <div class="container py-4 col-md-8 offset-md-4">
         <div class="row g-0 align-items-center">
           <div class="col-lg-6 mb-5 mb-lg-0">
@@ -11,10 +11,18 @@
                 ">
             <div class="card-body p-5 shadow-5 text-center">    
             <form method ='POST' action = "/Administrador/ActualizarBaseDeDatos" >
-                <input type="number" tittle="Número de peticiones" name="datos" value="300">
-                <input type="number" tittle="Tiempo en segundos por el numero de peticiones" name="tiempoCantidad" value="1452">
-                <input type="number" tittle="Tiempo en segundos de cada peticion" name="tiempoDia" value="1">
-                <input type ="submit" value="Guardar"/>
+                <div>
+                    Introduce el número de peticiones: <p><input type="number" tittle="Número de peticiones" name="datos" value="300"><p/>
+                </div>
+                <div>
+                    Introduce el tiempo de espera cada nº peticiones (seg): <p><input type="number" tittle="Tiempo en segundos por el numero de peticiones" name="tiempoCantidad" value="1452"><p/>
+                </div>
+                <div>
+                    Introduce el tiempo de cada petición (seg): <p><input type="number" tittle="Tiempo en segundos de cada peticion" name="tiempoDia" value="1"><p/>
+                </div>
+                <div>
+                    <p><input type ="submit" value="Buscar datos"/><p/>
+                </div>
             </form>
         </div>
     </div>

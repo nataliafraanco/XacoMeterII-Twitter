@@ -1,45 +1,35 @@
 {% extends "base2.html" %}
-
 {% block content %}
-<body class="img-fluid" style="background-image: url({{ url_for('static', filename='images/fondoHome.jpg') }});background-size: cover; ">
-<div class="container py-4 col-md-8 offset-md-4">
-    <div class="row g-0 align-items-center">
-      <div class="col-lg-6 mb-5 mb-lg-0">
-        <div class="card cascading-right" style="
-            background: hsla(0, 0%, 100%, 0.55);
-            backdrop-filter: blur(30px);
-            ">
-        <div class="card-body p-5 shadow-5 text-center">
-        <form method="POST" action="/Login">
-            <div class="img mb-3" >
-                <img src="{{url_for('static',filename='images/admin.png')}}" width=120px heigh=100px class="rounded-circle border border-dark"style="background-color: Silver">
-            </div>
 
-            <div class="form-outline mb-3">
-                <div class="control">
-                    <input class="form-control form-control-lg" type="text" name="usuario" placeholder="Usuario" required>
+<body class="img-fluid" style="background-image: url({{ url_for('static', filename='ImagenesCodigo/033-1748-10.png') }});background-size: cover; ">
+    <div class="container col-md-8 my-0">
+        <div class="row g-0 d-flex justify-content-center align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="card cascading-right" style="background: hsla(0, 0%, 100%, 0.55); backdrop-filter: blur(30px);">
+                    <div class="card-body p-5 shadow-5 text-center">
+                        <form method="POST" action="/Login">
+                            <div class="img mb-3" >
+                                <img src="{{url_for('static',filename='images/admin.png')}}" width=120px heigh=100px class="rounded-circle border border-dark"style="background-color: Silver">
+                            </div>
+
+                            <div class="form-outline mb-3">
+                                <div class="control">
+                                    <input class="form-control form-control-lg" type="text" name="usuario" placeholder="Usuario" required>
+                                </div>
+                            </div>
+
+                            <div class="form-outline mb-2">
+                                <div class="control">
+                                    <input class="form-control form-control-lg" type="password" name="contraseña" placeholder="Contraseña" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary btn-lg btn-block" href="{{url_for('Login')}}">
+                                Iniciar sesión
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-
-            <div class="form-outline mb-2">
-                <div class="control">
-                    <input class="form-control form-control-lg" type="password" name="contraseña" placeholder="Contraseña" required>
-                </div>
-            </div>
-            <div class="form-check d-flex justify-content-center mb-2">
-                <label class="checkbox">
-                    <input class="form-check-input" type="checkbox" name="recordar">
-                    Remember me
-                </label>
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg btn-block" href="{{url_for('Login')}}">
-                Iniciar sesión
-            </button>
-        </form>
+        </div>
     </div>
-    </div>
-    </div>
-</div>
-</div>
-
 {% endblock %}

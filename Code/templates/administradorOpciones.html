@@ -1,41 +1,46 @@
 {% extends "base2.html" %}
-
 {% block content %}
-<body class="img-fluid" style="background-image: url({{ url_for('static', filename='images/fondoHome.jpg') }});background-size: cover; ">
-    <div class="container py-4 col-md-8 offset-md-4">
-        <div class="row g-0 align-items-center">
-          <div class="col-lg-6 mb-5 mb-lg-0">
-            <div class="card cascading-right" style="
-                background: hsla(0, 0%, 100%, 0.55);
-                backdrop-filter: blur(30px);
-                ">
-            <div class="card-body p-5 shadow-5 text-center">    
-            <form method="post">
-                <div>
-                    <button type="button" class="btn btn-light" tittle="Actualizar">
-                        <a href="{{ url_for('AdministradorActualizar') }}" >
-                        Actualizar
-                        </a>
-                    </button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-light" tittle="Crear">
-                        <a href="{{ url_for('AdministradorCrear') }}" >
-                        Crear
-                        </a>
-                    </button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-light" tittle="Logout">
-                        <a href="{{ url_for('Logout') }}" >
-                        Salir de la sesión
-                        </a> 
-                    </button>
-                </div>               
-            </form>
-        </div>
+
+<body class="img-fluid" style="background-image: url({{ url_for('static', filename='ImagenesCodigo/033-1748-10.png') }});background-size: cover; ">
+<div class="container py-4 col-md-8 offset-md-4">
+    <div class="row g-0 align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+        <div class="card cascading-right" style="
+            background: hsla(0, 0%, 100%, 0.55);
+            backdrop-filter: blur(30px);
+            ">
+        <div class="card-body p-5 shadow-5 text-center">    
+        <form method="post">
+            <div>
+                <p>
+                <button type="button" class="btn-primary btn-lg btn-block" tittle="Actualizar">
+                    <a href="{{ url_for('AdministradorActualizar') }}" >
+                    Actualizar
+                    </a>
+                </button>
+                </p>
+            </div>
+            <div>
+                <p>
+                <button type="button" class="btn-primary btn-lg btn-block" tittle="Crear">
+                    <a href="{{ url_for('AdministradorCrear') }}" >
+                    Crear
+                    </a>
+                </button>
+                </p>
+            </div>
+            <div>
+                <p>
+                <button type="button" class="btn-primary btn-lg btn-block" tittle="Logout">
+                    <a href="{{ url_for('Logout') }}" >
+                    Salir de la sesión
+                    </a> 
+                </button>
+                </p>
+            </div>               
+        </form>
     </div>
 </div>
-</div>
-</div>
+
 {% endblock %}
+
