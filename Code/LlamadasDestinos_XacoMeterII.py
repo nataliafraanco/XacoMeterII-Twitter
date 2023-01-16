@@ -37,23 +37,23 @@ def home():
 
 @app.route('/Login', methods = ['GET','POST'])
 def Login():
-    conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CONTRASEÑA)
+    conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CLAVE)
     curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    if ('usuario' and 'contraseña') in request.form:
+    if ('usuario' and 'clave') in request.form:
         usuario = request.form.get ('usuario')
-        contraseña = request.form.get ('contraseña')
+        clave = request.form.get ('clave')
         query = ('''SELECT * FROM usuarios WHERE username = %s''')
         curs.execute(query, [usuario])    
         datos = curs.fetchone()
         if datos:
-            contraseñabd = datos['password']
-            if check_password_hash(contraseñabd, contraseña):
+            clavebd = datos['password']
+            if check_password_hash(clavebd, clave):
                 session['identificado'] = True
                 session.permanent = False
                 app.permanent_session_lifetime = timedelta(minutes=30)
                 return redirect(url_for('AdministradorOpciones'))
         else:
-            flash("Usuario o contraseña incorrectos. Vuelva a intentarlo.")
+            flash("Usuario o clave incorrectos. Vuelva a intentarlo.")
             return redirect(url_for('home'))
     curs.close()
     conn.close()
@@ -78,7 +78,7 @@ def AdministradorActualizarVista():
 @app.route('/Administrador/ActualizarBaseDeDatos', methods=['POST'])
 def AdministradorActualizar():
     if 'identificado' in session:
-        conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CONTRASEÑA)
+        conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CLAVE)
         total=0
         curs = conn.cursor()
         ultimaFecha = CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
@@ -104,7 +104,7 @@ def eligeFecha():
 @app.route('/Administrador/CrearBaseDeDatos',methods = ['POST'])
 def AdministradorCrear():
     if 'identificado' in session:
-        conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CONTRASEÑA)
+        conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CLAVE)
         fechaElegida = request.form.get("fecha")
         cantDatos = int(request.form.get("datos"))
         tiempoCantidad = int(request.form.get("tiempoCantidad"))
@@ -174,7 +174,7 @@ def AdministradorCrear():
 @app.route('/estadisticasTemporales/<string:patrimonio>')    
 def estadisticasTemporales(patrimonio):
     try:
-        conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CONTRASEÑA)
+        conn = psycopg2.connect(host="localhost",database="XacoMeter",port=5432,user=credencialesBD.USUARIO,password=credencialesBD.CLAVE)
         curs = conn.cursor()
         primeraFecha = request.args.get('fechaInicio')
         ultimaFecha = request.args.get('fechaFin')
