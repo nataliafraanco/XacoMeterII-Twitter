@@ -1,1 +1,1 @@
-web: gunicorn main:LlamadasDestinos_XacoMeterII
+web: gunicorn LlamadasDestinos_XacoMeterII:app
