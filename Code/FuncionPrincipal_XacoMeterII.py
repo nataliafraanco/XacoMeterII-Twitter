@@ -63,7 +63,7 @@ def funcionPrincipal(patrimonioId, PalabraClave, fecha, fechaFin):
 def insertarDatosCSV(patrimonioId, diccionarioTweets):
 
     #Añadimos el archivo CSV en una ruta temporal para que no tenga problemas en cuanto a permisos
-    CSVPath = "C:/tmp/temporal.csv"
+    CSVPath = "data/temporal.csv"
     csvFile = open(CSVPath , "a", newline="", encoding='utf-8')
     csvWriter = csv.writer(csvFile)
     #Sacamos la información del archivo json y la añadimos linea a linea al archivo CSV

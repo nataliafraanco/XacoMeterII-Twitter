@@ -145,7 +145,7 @@ def insertaDatos(id, patrimonio,conn,curs):
     curs.execute(insertarTablaPatrimonio, variables)
     
     #Definimos la ruta del archivo CSV
-    CSVpath = "C:/tmp/temporal.csv"
+    CSVpath = "data/temporal.csv"
     csvFile = open(CSVpath, "r", encoding='utf8')
     readCSV = csv.reader(csvFile, delimiter=',')
     for row in readCSV:
@@ -153,7 +153,7 @@ def insertaDatos(id, patrimonio,conn,curs):
               curs.execute(insertarTablaTweets, rowVariables)
     
     csvFile.close()      
-    remove("C:/tmp/temporal.csv")
+    remove("data/temporal.csv")
     
 
     

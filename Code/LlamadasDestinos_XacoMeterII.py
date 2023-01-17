@@ -19,6 +19,9 @@ from subprocess import Popen
 
 app = Flask(__name__)
 app.secret_key = 'Clave muy secreta sin revelacion'
+app.config["SESSION_PERMANENT"] = False
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta (minutes = 30)
+app.config["SESSION_TYPE"] = "filesystem"
 DEBUG = False
 PORT = 5000
 
@@ -31,8 +34,6 @@ def home():
         marcadores.append([localidades.loc[i,'latitud'], localidades.loc[i,'longitud']])
         ubicaciones.append(localidades.loc[i,'denominacion'])  
     ubicacionesLista = [x.replace("'",' ') for x in ubicaciones]
-    print(ubicaciones[0])
-    print(ubicacionesLista)
     return render_template('home.html', marcadores = marcadores, ubicaciones=ubicacionesLista)
 
 @app.route('/Login', methods = ['GET','POST'])
@@ -49,8 +50,6 @@ def Login():
             clavebd = datos['password']
             if check_password_hash(clavebd, clave):
                 session['identificado'] = True
-                session.permanent = False
-                app.permanent_session_lifetime = timedelta(minutes=30)
                 return redirect(url_for('AdministradorOpciones'))
         else:
             flash("Usuario o clave incorrectos. Vuelva a intentarlo.")
@@ -208,7 +207,7 @@ def LogErrores():
     except:
         flash('Ha ocurrido una excepcion mientras se intentaba descargar el archivo')
         return redirect(request.referrer)
-       
+'''      
 @app.route('/descargaPDF', methods=['POST'])
 def descarga():
     with open('outputPDF.pdf', 'rb') as f:
@@ -217,7 +216,7 @@ def descarga():
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'attachment; filename=estadisticasTemporales.pdf'
     return response
-
+'''
 class ExceptionFilter(logging.Filter):
     def filter(self, record):
         return record.levelno >= logging.WARNING

@@ -2,6 +2,27 @@
 {% block content %}
 <center>
     <div class="dashboard-app">
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Selecciona un patrimonio</a>
+            <div class="dropdown-menu">
+                <span id="input">
+                <script>
+                    var contador={{ubicaciones}}.length
+                    var ubicaciones = {{ ubicaciones|tojson }}
+                    var lista =[]
+                    for{
+                        patrimonio = ubicaciones[i].split(" ").join("+");
+                        function generateURL(param_value) {
+                            const baseURL = '/estadisticasTemporales/';
+                            return baseURL + patrimonio;
+                        }
+                        lista.push('<a class="dropdown-item" href="' + generateURL(patrimonio) + '">' + ubicaciones[i] + '</a>');
+                    document.getElementById('input').innerHTML = lista ;
+                    };             
+                </script>
+            </div>
+        </div>
+
         </script>
         <div style="position: absolute; top: 0; bottom: 0; left: 238px; right: 0;">
             <div id="map" style="height: 100%;"></div>
@@ -21,7 +42,6 @@
                 var contador={{marcadores}}.length
                 var ubicaciones = {{ ubicaciones|tojson }}
                 
-                
                 for (var i = 0; i < contador; i++) {
                     
                     latitud={{marcadores}}[i][0]
@@ -36,6 +56,7 @@
                     marker.bindPopup('<a href="' + generateURL(patrimonio) + '">' + ubicaciones[i] + '</a>').openPopup();
                 };             
         </script>
+        
     </div>  
 </center> 
 {% endblock %}
