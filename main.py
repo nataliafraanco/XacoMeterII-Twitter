@@ -9,7 +9,6 @@ import Code.GraficosEstadisticas_XacoMeterII
 import logging
 import psycopg2
 import psycopg2.extras
-import Code.credencialesBD
 import datetime
 from datetime import datetime,timedelta
 from werkzeug.security import check_password_hash
@@ -24,7 +23,8 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta (minutes = 30)
 app.config["SESSION_TYPE"] = "filesystem"
 DEBUG = False
 PORT = 5000
-
+from dotenv import load_dotenv
+load_dotenv
 @app.route("/")
 def home():
     localidades=datosMapa()
@@ -38,7 +38,7 @@ def home():
 
 @app.route('/Login', methods = ['GET','POST'])
 def Login():
-    conn = psycopg2.connect(host=Code.credencialesBD.HOST,database=Code.credencialesBD.DATABASE,port=Code.credencialesBD.PUERTO,user=Code.credencialesBD.USUARIO,password=Code.credencialesBD.CLAVE)
+    conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
     curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if ('usuario' and 'clave') in request.form:
         usuario = request.form.get ('usuario')
@@ -77,7 +77,7 @@ def AdministradorActualizarVista():
 @app.route('/Administrador/ActualizarBaseDeDatos', methods=['POST'])
 def AdministradorActualizar():
     if 'identificado' in session:
-        conn = psycopg2.connect(host=Code.credencialesBD.HOST,database=Code.credencialesBD.DATABASE,port=Code.credencialesBD.PUERTO,user=Code.credencialesBD.USUARIO,password=Code.credencialesBD.CLAVE)
+        conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
         total=0
         curs = conn.cursor()
         ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
@@ -103,7 +103,7 @@ def eligeFecha():
 @app.route('/Administrador/CrearBaseDeDatos',methods = ['POST'])
 def AdministradorCrear():
     if 'identificado' in session:
-        conn = psycopg2.connect(host=Code.credencialesBD.HOST,database=Code.credencialesBD.DATABASE,port=Code.credencialesBD.PUERTO,user=Code.credencialesBD.USUARIO,password=Code.credencialesBD.CLAVE)
+        conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
         fechaElegida = request.form.get("fecha")
         cantDatos = int(request.form.get("datos"))
         tiempoCantidad = int(request.form.get("tiempoCantidad"))
@@ -173,7 +173,7 @@ def AdministradorCrear():
 @app.route('/estadisticasTemporales/<string:patrimonio>')    
 def estadisticasTemporales(patrimonio):
     try:
-        conn = psycopg2.connect(host=Code.credencialesBD.HOST,database=Code.credencialesBD.DATABASE,port=Code.credencialesBD.PUERTO,user=Code.credencialesBD.USUARIO,password=Code.credencialesBD.CLAVE)
+        conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
         curs = conn.cursor()
         primeraFecha = request.args.get('fechaInicio')
         ultimaFecha = request.args.get('fechaFin')

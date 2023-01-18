@@ -1,13 +1,12 @@
-import Code.credencialesAPITwitterEducative
 import requests
-import json
 import csv
 import dateutil.parser
 import logging
 from datetime import datetime
+import os
 
 def auth():
-    return Code.credencialesAPITwitterEducative.BEARER_TOKEN
+    return os.getenv("BEARER_TOKEN")
 
 def accederEncabezados(bearer_token):
     return {"Authorization": "Bearer {}".format(bearer_token)}
