@@ -2,14 +2,14 @@ from flask import Flask, render_template, request, redirect, session, flash, url
 import os
 from os import name
 import time
-import Destinos_XacoMeterII
-import Busqueda_XacoMeterII
-import CrearTablasBD_XacoMeterII
-import GraficosEstadisticas_XacoMeterII
+import Code.Destinos_XacoMeterII
+import Code.Busqueda_XacoMeterII
+import Code.CrearTablasBD_XacoMeterII
+import Code.GraficosEstadisticas_XacoMeterII
 import logging
 import psycopg2
 import psycopg2.extras
-import credencialesBD
+import Code.credencialesBD
 import datetime
 from datetime import datetime,timedelta
 from werkzeug.security import check_password_hash
@@ -38,7 +38,7 @@ def home():
 
 @app.route('/Login', methods = ['GET','POST'])
 def Login():
-    conn = psycopg2.connect(host=credencialesBD.HOST,database=credencialesBD.DATABASE,port=credencialesBD.PUERTO,user=credencialesBD.USUARIO,password=credencialesBD.CLAVE)
+    conn = psycopg2.connect(host=Code.credencialesBD.HOST,database=Code.credencialesBD.DATABASE,port=Code.credencialesBD.PUERTO,user=Code.credencialesBD.USUARIO,password=Code.credencialesBD.CLAVE)
     curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if ('usuario' and 'clave') in request.form:
         usuario = request.form.get ('usuario')
@@ -77,17 +77,17 @@ def AdministradorActualizarVista():
 @app.route('/Administrador/ActualizarBaseDeDatos', methods=['POST'])
 def AdministradorActualizar():
     if 'identificado' in session:
-        conn = psycopg2.connect(host=credencialesBD.HOST,database=credencialesBD.DATABASE,port=credencialesBD.PUERTO,user=credencialesBD.USUARIO,password=credencialesBD.CLAVE)
+        conn = psycopg2.connect(host=Code.credencialesBD.HOST,database=Code.credencialesBD.DATABASE,port=Code.credencialesBD.PUERTO,user=Code.credencialesBD.USUARIO,password=Code.credencialesBD.CLAVE)
         total=0
         curs = conn.cursor()
-        ultimaFecha = CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
+        ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
         ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
         fechaActual = datetime.now()
         fechaActual= fechaActual-timedelta(hours=1)
         cantDatos = int(request.form.get("datos"))
         tiempoCantidad = int(request.form.get("tiempoCantidad"))
         tiempoDia = int(request.form.get("tiempoDia"))
-        Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+        Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
         flash ("La base de datos ha sido actualizada")
         conn.commit()
         curs.close()
@@ -103,7 +103,7 @@ def eligeFecha():
 @app.route('/Administrador/CrearBaseDeDatos',methods = ['POST'])
 def AdministradorCrear():
     if 'identificado' in session:
-        conn = psycopg2.connect(host=credencialesBD.HOST,database=credencialesBD.DATABASE,port=credencialesBD.PUERTO,user=credencialesBD.USUARIO,password=credencialesBD.CLAVE)
+        conn = psycopg2.connect(host=Code.credencialesBD.HOST,database=Code.credencialesBD.DATABASE,port=Code.credencialesBD.PUERTO,user=Code.credencialesBD.USUARIO,password=Code.credencialesBD.CLAVE)
         fechaElegida = request.form.get("fecha")
         cantDatos = int(request.form.get("datos"))
         tiempoCantidad = int(request.form.get("tiempoCantidad"))
@@ -113,8 +113,8 @@ def AdministradorCrear():
         fechaElegida=datetime.strptime(fechaOrdenada,"%d/%m/%Y")
         curs = conn.cursor()
         #Hay varias opciones: la base de datos tiene datos y se pueden recuperar o no existen datos
-        primeraFecha=CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)[0][0]
-        ultimaFecha=CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
+        primeraFecha=Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)[0][0]
+        ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
         fechaActual = datetime.now()
         fechaActual= fechaActual-timedelta(hours=1)
         #Si no existen datos se crean de cero:
@@ -122,9 +122,9 @@ def AdministradorCrear():
         if primeraFecha==None:
             index = 1
             total = 0
-            diccionarioBusqueda = Busqueda_XacoMeterII.palabrasClave()
+            diccionarioBusqueda = Code.Busqueda_XacoMeterII.palabrasClave()
             for x, y in diccionarioBusqueda.items():
-                total = Destinos_XacoMeterII.OperacionesBD(index, x, y, fechaElegida,fechaActual, total, conn, curs, cantDatos, tiempoCantidad,tiempoDia)
+                total = Code.Destinos_XacoMeterII.OperacionesBD(index, x, y, fechaElegida,fechaActual, total, conn, curs, cantDatos, tiempoCantidad,tiempoDia)
                 index += 1
                 if total == cantDatos:
                     time.sleep(tiempoCantidad)
@@ -140,26 +140,26 @@ def AdministradorCrear():
             #Si existen datos, para aumentar el rendimiento de la web y no tener que hacer tantas consultas a la API se reutilizan datos de la BBDD
             if primeraFecha<=fechaElegida<ultimaFecha:
                 #Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
-                CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
-                CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
+                Code.CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
+                Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
                 conn.commit()
                 curs.close()
                 conn.close()   
                 
             elif fechaElegida<primeraFecha:
-                total=Destinos_XacoMeterII.buclePatrimonios(fechaElegida,primeraFecha,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+                total=Code.Destinos_XacoMeterII.buclePatrimonios(fechaElegida,primeraFecha,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
                 conn.commit()
-                Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
-                CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
+                Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+                Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
                 conn.commit()
                 curs.close()
                 conn.close()
 
             else:
-                CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
-                Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
-                CrearTablasBD_XacoMeterII.borradoTablas(ultimaFecha,fechaElegida,conn,curs)
-                CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
+                Code.CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
+                Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+                Code.CrearTablasBD_XacoMeterII.borradoTablas(ultimaFecha,fechaElegida,conn,curs)
+                Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
                 conn.commit()
                 curs.close()
                 conn.close()
@@ -173,21 +173,21 @@ def AdministradorCrear():
 @app.route('/estadisticasTemporales/<string:patrimonio>')    
 def estadisticasTemporales(patrimonio):
     try:
-        conn = psycopg2.connect(host=credencialesBD.HOST,database=credencialesBD.DATABASE,port=credencialesBD.PUERTO,user=credencialesBD.USUARIO,password=credencialesBD.CLAVE)
+        conn = psycopg2.connect(host=Code.credencialesBD.HOST,database=Code.credencialesBD.DATABASE,port=Code.credencialesBD.PUERTO,user=Code.credencialesBD.USUARIO,password=Code.credencialesBD.CLAVE)
         curs = conn.cursor()
         primeraFecha = request.args.get('fechaInicio')
         ultimaFecha = request.args.get('fechaFin')
         if primeraFecha==None or len(primeraFecha)==None:
-            primeraFecha=CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)[0][0]
+            primeraFecha=Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)[0][0]
         else:
             primeraFecha = datetime.strptime(primeraFecha, "%Y-%m-%d")
         if ultimaFecha==None or len(ultimaFecha)==None:
-            ultimaFecha=CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
+            ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
         else:
             ultimaFecha = datetime.strptime(ultimaFecha, "%Y-%m-%d")
-        graficoTemporal=GraficosEstadisticas_XacoMeterII.graficoTemporal(patrimonio, primeraFecha, ultimaFecha, conn, curs)
-        graficoCircular=GraficosEstadisticas_XacoMeterII.graficoCircularTotal(patrimonio, primeraFecha, ultimaFecha, conn, curs)
-        graficoMetricasPublicas=GraficosEstadisticas_XacoMeterII.graficoMetricasPublicas(patrimonio, primeraFecha, ultimaFecha, conn, curs)
+        graficoTemporal=Code.GraficosEstadisticas_XacoMeterII.graficoTemporal(patrimonio, primeraFecha, ultimaFecha, conn, curs)
+        graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircularTotal(patrimonio, primeraFecha, ultimaFecha, conn, curs)
+        graficoMetricasPublicas=Code.GraficosEstadisticas_XacoMeterII.graficoMetricasPublicas(patrimonio, primeraFecha, ultimaFecha, conn, curs)
         html = render_template('serieTemporal.html', graficoTemporal=graficoTemporal, graficoCircular=graficoCircular, graficoMetricasPublicas=graficoMetricasPublicas)
         with open('temp.html', 'w') as f:
             f.write(html)

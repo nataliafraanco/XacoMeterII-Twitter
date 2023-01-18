@@ -6,7 +6,6 @@ import time
 
 
 def OperacionesBD(id, patrimonio, diccionarioBusqueda, primeraFecha, ultimaFecha, contador,conn,curs, cantDatos, tiempoCantidad,tiempoDia):
-    #ultimaFecha = datetime.datetime.now()
     #Realiza tantas consultas como días haya de diferencia entre la fecha seleccionada y la fecha actual
     consultas=(ultimaFecha-primeraFecha).days
     for diferencia in range (consultas):
@@ -27,7 +26,6 @@ def OperacionesBD(id, patrimonio, diccionarioBusqueda, primeraFecha, ultimaFecha
     return contador
 
 def buclePatrimonios(primeraFecha,ultimaFecha,conn,curs, total, cantDatos, tiempoCantidad,tiempoDia):
-    
     diccionarioBusqueda = Busqueda_XacoMeterII.palabrasClave()
     for x, y in diccionarioBusqueda.items():
             index = CrearTablasBD_XacoMeterII.actualizaTablas(x,conn,curs)[0][0]
