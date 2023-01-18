@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import io
 import base64
 from datetime import datetime,timedelta
-import CrearTablasBD_XacoMeterII
+import Code.CrearTablasBD_XacoMeterII
 import matplotlib.dates as mdates
 
 def graficoTemporal(patrimonio, primeraFecha, ultimaFecha, conn, curs):
@@ -20,7 +20,7 @@ def graficoTemporal(patrimonio, primeraFecha, ultimaFecha, conn, curs):
     for diferencia in range (consultas):
         fechaBusqueda= primeraFecha+timedelta(days=diferencia)
         fechaBD = fechaBusqueda.strftime("%Y-%m-%d")
-        datos.append(CrearTablasBD_XacoMeterII.cuentaDatos(conn,curs,fechaBD,patrimonio))
+        datos.append(Code.CrearTablasBD_XacoMeterII.cuentaDatos(conn,curs,fechaBD,patrimonio))
         fechas.append(fechaBD)
     fechas_datetime = [datetime.strptime(f, '%Y-%m-%d') for f in fechas]
     plt.plot(fechas_datetime, datos)
@@ -44,8 +44,8 @@ def graficoCircularTotal(patrimonio, primeraFecha, ultimaFecha, conn, curs):
     patrimonio = str(patrimonio.replace('+',' '))
     print(patrimonio)
     tweets=[]
-    tweets.append(CrearTablasBD_XacoMeterII.cuentaFilas(conn,curs,primeraFecha,ultimaFecha)[0])
-    tweets.append(CrearTablasBD_XacoMeterII.cuentaFilasPatrimonio(conn,curs,primeraFecha,ultimaFecha,patrimonio)[0]) 
+    tweets.append(Code.CrearTablasBD_XacoMeterII.cuentaFilas(conn,curs,primeraFecha,ultimaFecha)[0])
+    tweets.append(Code.CrearTablasBD_XacoMeterII.cuentaFilasPatrimonio(conn,curs,primeraFecha,ultimaFecha,patrimonio)[0]) 
     if tweets[0] != 0 and tweets[0] != None:
         porcentaje=round(((tweets[1]*100)/tweets[0]), 2)
     else:
@@ -74,9 +74,9 @@ def graficoMetricasPublicas(patrimonio, primeraFecha, ultimaFecha, conn, curs):
     for diferencia in range (consultas):
         fechaBusqueda= primeraFecha+timedelta(days=diferencia)
         fechaBD = fechaBusqueda.strftime("%Y-%m-%d")
-        likes.append(CrearTablasBD_XacoMeterII.cuentaLikes(conn,curs,fechaBD,patrimonio))
-        reply.append(CrearTablasBD_XacoMeterII.cuentaReply(conn,curs,fechaBD,patrimonio))
-        retweets.append(CrearTablasBD_XacoMeterII.cuentaRetweet(conn,curs,fechaBD,patrimonio))  
+        likes.append(Code.CrearTablasBD_XacoMeterII.cuentaLikes(conn,curs,fechaBD,patrimonio))
+        reply.append(Code.CrearTablasBD_XacoMeterII.cuentaReply(conn,curs,fechaBD,patrimonio))
+        retweets.append(Code.CrearTablasBD_XacoMeterII.cuentaRetweet(conn,curs,fechaBD,patrimonio))  
         fechas.append(fechaBD)
     fechas_datetime = [datetime.strptime(f, '%Y-%m-%d') for f in fechas]
     plt.figure(figsize=(18,4))

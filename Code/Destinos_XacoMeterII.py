@@ -1,6 +1,6 @@
-import CrearTablasBD_XacoMeterII
-import FuncionPrincipal_XacoMeterII
-import Busqueda_XacoMeterII
+import Code.CrearTablasBD_XacoMeterII
+import Code.FuncionPrincipal_XacoMeterII
+import Code.Busqueda_XacoMeterII
 import datetime
 import time
 
@@ -20,15 +20,15 @@ def OperacionesBD(id, patrimonio, diccionarioBusqueda, primeraFecha, ultimaFecha
         if contador == cantDatos:
             time.sleep(tiempoCantidad)
             contador=0
-        FuncionPrincipal_XacoMeterII.funcionPrincipal(id,diccionarioBusqueda,fechaBusqueda,fechaFin)
-    CrearTablasBD_XacoMeterII.insertaDatos(id, patrimonio,conn,curs)
+        Code.FuncionPrincipal_XacoMeterII.funcionPrincipal(id,diccionarioBusqueda,fechaBusqueda,fechaFin)
+    Code.CrearTablasBD_XacoMeterII.insertaDatos(id, patrimonio,conn,curs)
     print ('---', contador)
     return contador
 
 def buclePatrimonios(primeraFecha,ultimaFecha,conn,curs, total, cantDatos, tiempoCantidad,tiempoDia):
-    diccionarioBusqueda = Busqueda_XacoMeterII.palabrasClave()
+    diccionarioBusqueda = Code.Busqueda_XacoMeterII.palabrasClave()
     for x, y in diccionarioBusqueda.items():
-            index = CrearTablasBD_XacoMeterII.actualizaTablas(x,conn,curs)[0][0]
+            index = Code.CrearTablasBD_XacoMeterII.actualizaTablas(x,conn,curs)[0][0]
             total = OperacionesBD(index, x, y, primeraFecha,ultimaFecha, total,conn,curs,cantDatos, tiempoCantidad,tiempoDia)
             if total == cantDatos:
                 time.sleep(tiempoCantidad)

@@ -1,4 +1,4 @@
-import credencialesAPITwitterEducative
+import Code.credencialesAPITwitterEducative
 import requests
 import json
 import csv
@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 
 def auth():
-    return credencialesAPITwitterEducative.BEARER_TOKEN
+    return Code.credencialesAPITwitterEducative.BEARER_TOKEN
 
 def accederEncabezados(bearer_token):
     return {"Authorization": "Bearer {}".format(bearer_token)}
