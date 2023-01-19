@@ -1,9 +1,9 @@
 ﻿n;cod_jcyl;provincia;municipio;localidad;denominacion;categoria;latitud;longitud;altitud
 1;09-307-0001-001-0000-000;Burgos;Redecilla del Camino;Redecilla del Camino;Rollo de Justicia de Redecilla del Camino;Rollos de Justicia;42.43870;-3.06318;735
 2;09-082-0001-004-0000-000;Burgos;Castildelgado;Castildelgado;Palacio Fortificado de Castildelgado;Castillos;42.43670;-3.08364;770
-3;09-048-0002-001-0000-000;Burgos;Belorado;Belorado;Castillo de Belorado ;Castillos;42.42080;-3.18730;815
+3;09-048-0002-001-0000-000;Burgos;Belorado;Belorado;Castillo de Belorado;Castillos;42.42080;-3.18730;815
 4;09-431-0002-001-0000-000;Burgos;Villafranca Montes de Oca;Villafranca Montes de Oca;Ruinas de la Iglesia de San Félix de Villafranca Montes de Oca;Monumento;42.40190;-3.30008;927
-5;09-044-0004-001-0000-000;Burgos;Barrios de Colina;San Juan de Ortega;Monasterio de San Juan de Ortega ;Monumento;42.376;-3.43686;1001
+5;09-044-0004-001-0000-000;Burgos;Barrios de Colina;San Juan de Ortega;Monasterio de San Juan de Ortega;Monumento;42.376;-3.43686;1001
 6;09-029-0001-002-0000-000;Burgos;Atapuerca;Atapuerca;Sierra de Atapuerca ;Zona arqueológica;42.34885;-3.51478;1039
 7;;Burgos;Ibeas de Juarros;Ibeas de Juarros;Cueva del Silo de Ibeas de Juarros;Arte rupestre;42.34755;-3.52124;1004
 8;09-177-0005-024-0000-000;Burgos;Ibeas de Juarros;Ibeas de Juarros;Cueva mayor Portalon de entrada Ibeas de Juarros;Arte rupestre;42.34819;-3.51716;1038
@@ -40,7 +40,7 @@
 39;09-059-0001-029-0000-000;Burgos;Burgos;Burgos;Real Monasterio de San Agustin de Burgos;Monumento;42.3344;-3.70024;855
 40;09-059-0001-031-0000-000;Burgos;Burgos;Burgos;Teatro Principal de Burgos;Monumento;42.3406;-3.70023;857
 41;09-377-0001-016-0000-000;Burgos;Tardajos;Tardajos;Crucero de Tardajos;Hitos forales;42.3483;-3.81343;827
-42;09-377-0001-001-0000-000;Burgos;Tardajos;Tardajos;Yacimiento de Deobrigula de Tardajos ;Zona arqueológica;42.352276;-3.806918;894
+42;09-377-0001-001-0000-000;Burgos;Tardajos;Tardajos;Yacimiento de Deobrigula de Tardajos;Zona arqueológica;42.352276;-3.806918;894
 43;09-159-0001-008-0000-000;Burgos;Hontanas;Hontanas;Crucero de Hontanas;Rollos de Justicia;42.31224;-4.04446;865
 44;09-159-0001-001-0000-000;Burgos;Hontanas;Hontanas;Torreon de Hontanas;Castillos;42.310856;-4.068675;850
 45;09-091-0001-006-0000-000;Burgos;Castrojeriz;Castrojeriz;La Villa de Castrojeriz;Conjunto histórico;42.29111;-4.13739;814
@@ -50,7 +50,7 @@
 49;09-091-0001-035-0000-000;Burgos;Castrojeriz;Castrojeriz;Murallas de Castrojeriz;Castillos;42.2878;-4.1407;797
 50;09-091-0001-003-0000-000;Burgos;Castrojeriz;Castrojeriz;Iglesia Colegiata Santa Maria del Manzano de Castrojeriz;Monumento;42.2927;-4.12786;793
 51;09-091-0001-004-0000-000;Burgos;Castrojeriz;Castrojeriz;Iglesia de San Juan de Castrojeriz;Monumento;42.2898;-4.1435;805
-52;34-089-0001-002-0000-000;Palencia;Itero de la Vega;Itero de la Vega;Rollo de Justicia de Itero de la Vega ;Monumento;42.287823;-4.257491;771
+52;34-089-0001-002-0000-000;Palencia;Itero de la Vega;Itero de la Vega;Rollo de Justicia de Itero de la Vega;Monumento;42.287823;-4.257491;771
 53;00-000-0000-026-0000-000;Palencia;Boadilla del Camino;Boadilla del Camino;Canal de Castilla de Boadilla del Camino;Conjunto histórico;42.15866;-4.65525;793
 54;34-034-0001-002-0000-000;Palencia;Boadilla del Camino;Boadilla del Camino;Iglesia Parroquial de Nuestra Señora de la Asuncion de Boadilla del Camino;Monumento;42.258449;-4.347152;783
 55;;Palencia;Boadilla del Camino;Boadilla del Camino;Rollo de Justicia de la Villa de Boadilla del Camino;Monumento;42.2589157;-4.3467574;782

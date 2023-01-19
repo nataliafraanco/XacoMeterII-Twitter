@@ -68,6 +68,7 @@ def insertarDatosCSV(patrimonioId, diccionarioTweets):
     #Sacamos la información del archivo json y la añadimos linea a linea al archivo CSV
     if ('data' in diccionarioTweets)  :
         for tweet, usuario in zip (diccionarioTweets['data'], diccionarioTweets['includes']['users']):
+            text = tweet['text']
             tweet_id = tweet['id']
             username = usuario['username']
             createdAt = dateutil.parser.parse(tweet['created_at'])
@@ -81,8 +82,9 @@ def insertarDatosCSV(patrimonioId, diccionarioTweets):
             retweet_count = tweet['public_metrics']['retweet_count']
             like_count = tweet['public_metrics']['like_count']
             reply_count = tweet['public_metrics']['reply_count']
-            lineaCSV = [patrimonioId, tweet_id, geo, lang, text, username, verified, retweet_count, like_count,reply_count, createdAt]
-            csvWriter.writerow(lineaCSV)
+            if not text.startswith("RT"):
+                lineaCSV = [patrimonioId, tweet_id, geo, lang, text, username, verified, retweet_count, like_count,reply_count, createdAt]
+                csvWriter.writerow(lineaCSV)
         #Cerramos el fichero CSV
         csvFile.close()
         

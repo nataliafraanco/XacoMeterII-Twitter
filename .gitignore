@@ -1,8 +1,6 @@
 #Archivos ocultos:
 
 #Credenciales de la API de Twitter,Credenciales de la base de datos, variables de entorno y entorno virtual
-credencialesBD.py
-credencialesAPITwitterEducative.py
 errores.log
 venv/
 .env

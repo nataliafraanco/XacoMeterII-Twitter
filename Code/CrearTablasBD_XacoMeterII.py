@@ -70,9 +70,9 @@ def cuentaFilas(conn,curs,fechaIni, fechaFin):
 def cuentaLikes(conn,curs,fecha, patrimonio):
     cuentaLikes=('''SELECT Like_Count FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
                     ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
-                    WHERE TWEETS_PATRIMONIOS.Tweet_Texto NOT LIKE %s AND LISTADO_PATRIMONIOS.Patrimonio = %s AND
+                    WHERE LISTADO_PATRIMONIOS.Patrimonio = %s AND
                     TWEETS_PATRIMONIOS.Tweet_CreatedAt = %s''')
-    variables = 'RT', patrimonio, fecha
+    variables = patrimonio, fecha
     curs.execute(cuentaLikes, variables)
     numeroDatos = curs.fetchall()
     soloValor=[]
@@ -87,9 +87,9 @@ def cuentaLikes(conn,curs,fecha, patrimonio):
 def cuentaReply(conn,curs,fecha, patrimonio):
     cuentaReply=('''SELECT Reply_Count FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
                     ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
-                    WHERE TWEETS_PATRIMONIOS.Tweet_Texto NOT LIKE %s AND LISTADO_PATRIMONIOS.Patrimonio = %s AND
+                    WHERE LISTADO_PATRIMONIOS.Patrimonio = %s AND
                     TWEETS_PATRIMONIOS.Tweet_CreatedAt = %s''')
-    variables = 'RT%', patrimonio, fecha 
+    variables = patrimonio, fecha 
     curs.execute(cuentaReply, variables)
     numeroDatos = curs.fetchall()
     soloValor=[]
@@ -104,9 +104,9 @@ def cuentaReply(conn,curs,fecha, patrimonio):
 def cuentaRetweet(conn,curs,fecha, patrimonio):
     cuentaRetweet=('''SELECT Retweet_Count FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
                     ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
-                    WHERE TWEETS_PATRIMONIOS.Tweet_Texto NOT LIKE %s AND LISTADO_PATRIMONIOS.Patrimonio = %s AND
+                    WHERE LISTADO_PATRIMONIOS.Patrimonio = %s AND
                     TWEETS_PATRIMONIOS.Tweet_CreatedAt = %s''')
-    variables = 'RT%', patrimonio, fecha
+    variables = patrimonio, fecha
     curs.execute(cuentaRetweet, variables)
     numeroDatos = curs.fetchall()
     soloValor=[]

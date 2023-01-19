@@ -25,50 +25,71 @@ DEBUG = False
 PORT = 5000
 from dotenv import load_dotenv
 load_dotenv
+
 @app.route("/")
 def home():
-    localidades=datosMapa()
-    marcadores=[]
-    ubicaciones=[]
-    for i in localidades.index:
-        marcadores.append([localidades.loc[i,'latitud'], localidades.loc[i,'longitud']])
-        ubicaciones.append(localidades.loc[i,'denominacion'])  
-    ubicacionesLista = [x.replace("'",' ') for x in ubicaciones]
-    return render_template('home.html', marcadores = marcadores, ubicaciones=ubicacionesLista)
-
+    try:
+        localidades=datosMapa()
+        marcadores=[]
+        ubicaciones=[]
+        for i in localidades.index:
+            marcadores.append([localidades.loc[i,'latitud'], localidades.loc[i,'longitud']])
+            ubicaciones.append(localidades.loc[i,'denominacion'])  
+        ubicacionesLista = [x.replace("'",' ') for x in ubicaciones]
+        return render_template('home.html', marcadores = marcadores, ubicaciones=ubicacionesLista)
+            
+    except Exception as e:
+        logging.error(f'{datetime.now()} - {e}')     
+        return '<script>alert("Ha ocurrido un error en la aplicacion");</script>', 500
+    
 @app.route('/Login', methods = ['GET','POST'])
 def Login():
-    conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
-    curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    if ('usuario' and 'clave') in request.form:
-        usuario = request.form.get ('usuario')
-        clave = request.form.get ('clave')
-        query = ('''SELECT * FROM usuarios WHERE username = %s''')
-        curs.execute(query, [usuario])    
-        datos = curs.fetchone()
-        if datos:
-            clavebd = datos['password']
-            if check_password_hash(clavebd, clave):
-                session['identificado'] = True
-                return redirect(url_for('AdministradorOpciones'))
-        else:
-            flash("Usuario o clave incorrectos. Vuelva a intentarlo.")
-            return redirect(url_for('home'))
-    curs.close()
-    conn.close()
-    return render_template('login.html')
+    try:
+        conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
+        curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        if ('usuario' and 'clave') in request.form:
+            usuario = request.form.get ('usuario')
+            clave = request.form.get ('clave')
+            query = ('''SELECT * FROM usuarios WHERE username = %s''')
+            curs.execute(query, [usuario])    
+            datos = curs.fetchone()
+            if datos:
+                clavebd = datos['password']
+                if check_password_hash(clavebd, clave):
+                    session['identificado'] = True
+                    return redirect(url_for('AdministradorOpciones'))
+            else:
+                flash("Usuario o clave incorrectos. Vuelva a intentarlo.")
+                return redirect(url_for('home'))
+        curs.close()
+        conn.close()
+        return render_template('login.html')
+            
+    except Exception as e:
+        logging.error(f'{datetime.now()} - {e}')     
+        return redirect(url_for('home'))
     
 @app.route('/Logout')
 def Logout():
-    session.pop('identificado',None)
-    return redirect(url_for('home'))
+    try:
+        session.pop('identificado',None)
+        return redirect(url_for('home'))
+            
+    except Exception as e:
+        logging.error(f'{datetime.now()} - {e}')     
+        return redirect(url_for('home'))
 
 @app.route('/Administrador', methods = ['GET','POST'])
 def AdministradorOpciones():
-    if 'identificado' in session:
-        return render_template('administradorOpciones.html')
-    else:
-        return redirect (url_for('Login'))
+    try:
+        if 'identificado' in session:
+            return render_template('administradorOpciones.html')
+        else:
+            return redirect (url_for('Login'))
+                
+    except Exception as e:
+        logging.error(f'{datetime.now()} - {e}')     
+        return redirect(url_for('home'))
 
 @app.route('/Administrador/ActualizarBaseDeDatos')
 def AdministradorActualizarVista():
@@ -76,99 +97,108 @@ def AdministradorActualizarVista():
 
 @app.route('/Administrador/ActualizarBaseDeDatos', methods=['POST'])
 def AdministradorActualizar():
-    if 'identificado' in session:
-        conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
-        total=0
-        curs = conn.cursor()
-        ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
-        ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
-        fechaActual = datetime.now()
-        fechaActual= fechaActual-timedelta(hours=1)
-        cantDatos = int(request.form.get("datos"))
-        tiempoCantidad = int(request.form.get("tiempoCantidad"))
-        tiempoDia = int(request.form.get("tiempoDia"))
-        Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
-        flash ("La base de datos ha sido actualizada")
-        conn.commit()
-        curs.close()
-        conn.close()
-        return redirect(url_for('AdministradorOpciones'))
-    else:
-        return redirect (url_for('Login'))
-
+    try:
+        if 'identificado' in session:
+            conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
+            total=0
+            curs = conn.cursor()
+            ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
+            ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
+            fechaActual = datetime.now()
+            fechaActual= fechaActual-timedelta(hours=1)
+            cantDatos = int(request.form.get("datos"))
+            tiempoCantidad = int(request.form.get("tiempoCantidad"))
+            tiempoDia = int(request.form.get("tiempoDia"))
+            Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+            flash ("La base de datos ha sido actualizada")
+            conn.commit()
+            curs.close()
+            conn.close()
+            return redirect(url_for('AdministradorOpciones'))
+        else:
+            return redirect (url_for('Login'))
+        
+    except Exception as e:
+        logging.error(f'{datetime.now()} - {e}')     
+        return redirect(url_for('home'))
+    
 @app.route('/Administrador/CrearBaseDeDatos')
 def eligeFecha():
     return render_template('admin_Crear.html')
 
 @app.route('/Administrador/CrearBaseDeDatos',methods = ['POST'])
 def AdministradorCrear():
-    if 'identificado' in session:
-        conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
-        fechaElegida = request.form.get("fecha")
-        cantDatos = int(request.form.get("datos"))
-        tiempoCantidad = int(request.form.get("tiempoCantidad"))
-        tiempoDia = int(request.form.get("tiempoDia"))
-        partes=fechaElegida.split("-")
-        fechaOrdenada="/".join(reversed(partes))
-        fechaElegida=datetime.strptime(fechaOrdenada,"%d/%m/%Y")
-        curs = conn.cursor()
-        #Hay varias opciones: la base de datos tiene datos y se pueden recuperar o no existen datos
-        primeraFecha=Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)[0][0]
-        ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
-        fechaActual = datetime.now()
-        fechaActual= fechaActual-timedelta(hours=1)
-        #Si no existen datos se crean de cero:
+    try:
+        if 'identificado' in session:
+            conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
+            fechaElegida = request.form.get("fecha")
+            cantDatos = int(request.form.get("datos"))
+            tiempoCantidad = int(request.form.get("tiempoCantidad"))
+            tiempoDia = int(request.form.get("tiempoDia"))
+            partes=fechaElegida.split("-")
+            fechaOrdenada="/".join(reversed(partes))
+            fechaElegida=datetime.strptime(fechaOrdenada,"%d/%m/%Y")
+            curs = conn.cursor()
+            #Hay varias opciones: la base de datos tiene datos y se pueden recuperar o no existen datos
+            primeraFecha=Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)[0][0]
+            ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
+            fechaActual = datetime.now()
+            fechaActual= fechaActual-timedelta(hours=1)
+            #Si no existen datos se crean de cero:
 
-        if primeraFecha==None:
-            index = 1
-            total = 0
-            diccionarioBusqueda = Code.Busqueda_XacoMeterII.palabrasClave()
-            for x, y in diccionarioBusqueda.items():
-                total = Code.Destinos_XacoMeterII.OperacionesBD(index, x, y, fechaElegida,fechaActual, total, conn, curs, cantDatos, tiempoCantidad,tiempoDia)
-                index += 1
-                if total == cantDatos:
-                    time.sleep(tiempoCantidad)
-                    total=0
-            conn.commit()
-            curs.close()
-            conn.close() 
-        else:    
-            primeraFecha=datetime(primeraFecha.year, primeraFecha.month, primeraFecha.day)
-            ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
-            total = 0
+            if primeraFecha==None:
+                index = 1
+                total = 0
+                diccionarioBusqueda = Code.Busqueda_XacoMeterII.palabrasClave()
+                for x, y in diccionarioBusqueda.items():
+                    total = Code.Destinos_XacoMeterII.OperacionesBD(index, x, y, fechaElegida,fechaActual, total, conn, curs, cantDatos, tiempoCantidad,tiempoDia)
+                    index += 1
+                    if total == cantDatos:
+                        time.sleep(tiempoCantidad)
+                        total=0
+                conn.commit()
+                curs.close()
+                conn.close() 
+            else:    
+                primeraFecha=datetime(primeraFecha.year, primeraFecha.month, primeraFecha.day)
+                ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
+                total = 0
+            
+                #Si existen datos, para aumentar el rendimiento de la web y no tener que hacer tantas consultas a la API se reutilizan datos de la BBDD
+                if primeraFecha<=fechaElegida<ultimaFecha:
+                    #Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+                    Code.CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
+                    Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
+                    conn.commit()
+                    curs.close()
+                    conn.close()   
+                    
+                elif fechaElegida<primeraFecha:
+                    total=Code.Destinos_XacoMeterII.buclePatrimonios(fechaElegida,primeraFecha,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+                    conn.commit()
+                    Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+                    Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
+                    conn.commit()
+                    curs.close()
+                    conn.close()
+
+                else:
+                    Code.CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
+                    Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+                    Code.CrearTablasBD_XacoMeterII.borradoTablas(ultimaFecha,fechaElegida,conn,curs)
+                    Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
+                    conn.commit()
+                    curs.close()
+                    conn.close()
+            flash('La base de datos ha sido creada correctamente')
+            return redirect(url_for('AdministradorOpciones'))
+
+        else:
+            return redirect (url_for('Login'))
         
-            #Si existen datos, para aumentar el rendimiento de la web y no tener que hacer tantas consultas a la API se reutilizan datos de la BBDD
-            if primeraFecha<=fechaElegida<ultimaFecha:
-                #Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
-                Code.CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
-                Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
-                conn.commit()
-                curs.close()
-                conn.close()   
-                
-            elif fechaElegida<primeraFecha:
-                total=Code.Destinos_XacoMeterII.buclePatrimonios(fechaElegida,primeraFecha,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
-                conn.commit()
-                Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
-                Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
-                conn.commit()
-                curs.close()
-                conn.close()
-
-            else:
-                Code.CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
-                Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
-                Code.CrearTablasBD_XacoMeterII.borradoTablas(ultimaFecha,fechaElegida,conn,curs)
-                Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
-                conn.commit()
-                curs.close()
-                conn.close()
-        flash('La base de datos ha sido creada correctamente')
-        return redirect(url_for('AdministradorOpciones'))
-
-    else:
-        return redirect (url_for('Login'))
-
+    except Exception as e:
+        logging.error(f'{datetime.now()} - {e}')     
+        return redirect(url_for('home'))
 
 @app.route('/estadisticasTemporales/<string:patrimonio>')    
 def estadisticasTemporales(patrimonio):
@@ -195,8 +225,8 @@ def estadisticasTemporales(patrimonio):
         p.wait()
         os.remove('temp.html')
         return render_template('serieTemporal.html', graficoTemporal=graficoTemporal, graficoCircular=graficoCircular, graficoMetricasPublicas=graficoMetricasPublicas)
+    
     except Exception as e:
-        flash('Ha ocurrido una excepcion mientras se intentaban realizar las estadísticas')
         logging.error(f'{datetime.now()} - {e}')     
         return redirect(url_for('home'))
     
@@ -205,8 +235,7 @@ def LogErrores():
     try:
         return send_file('errores.log', attachment_file='errores.log')
     except:
-        flash('Ha ocurrido una excepcion mientras se intentaba descargar el archivo')
-        return redirect(request.referrer)
+        return redirect(url_for('home'))
 '''      
 @app.route('/descargaPDF', methods=['POST'])
 def descarga():
