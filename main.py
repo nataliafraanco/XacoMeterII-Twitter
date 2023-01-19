@@ -234,7 +234,8 @@ def handle_generic_error(error):
     return '<script>alert("Ha ocurrido un error en la aplicacion");</script>', 500
 '''
 def datosMapa():
-    locations=pd.read_csv('.\data\inventario_01.csv',sep=';',index_col=0)   
+    ruta_archivo = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'inventario_01.csv')
+    locations=pd.read_csv(ruta_archivo,sep=';',index_col=0)   
     return locations
 
 
