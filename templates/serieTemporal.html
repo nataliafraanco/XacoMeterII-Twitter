@@ -3,8 +3,8 @@
         <div class="container">
             <div class="row center-form">
                 <form >
-                    Fecha Inicio: <input type="date" name="fechaInicio">
-                    Fecha Fin: <input type="date" name="fechaFin">
+                    Fecha Inicio: <input type="date" value={{fechaInicio}} name="fechaInicio">
+                    Fecha Fin: <input type="date" value={{fechaFin}} name="fechaFin">
                     <input type="submit" value="Buscar">
                 </form>
             </div>
@@ -22,9 +22,6 @@
             <div class="row" align="right">
                 <form action="/home" method="post" class="float-left">
                     <button type="submit" class="btn btn-secondary">Volver</button>
-                </form>
-                <form action="/descargaPDF" method="post" class="float-right">
-                    <button type="submit" class="btn btn-secondary">Descarga en PDF</button>
                 </form>
                
             </div>

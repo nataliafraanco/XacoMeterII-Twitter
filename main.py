@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, flash, url_for, make_response, send_file, get_flashed_messages
 import os
-from os import name
+from os import name, remove
 import time
 import Code.Destinos_XacoMeterII
 import Code.Busqueda_XacoMeterII
@@ -13,7 +13,7 @@ import datetime
 from datetime import datetime,timedelta
 from werkzeug.security import check_password_hash
 import pandas as pd
-
+import csv
 from subprocess import Popen
 
 app = Flask(__name__)
@@ -23,9 +23,10 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta (minutes = 30)
 app.config["SESSION_TYPE"] = "filesystem"
 DEBUG = False
 PORT = 5000
-from dotenv import load_dotenv
-load_dotenv
 
+from dotenv import load_dotenv
+load_dotenv()
+ 
 @app.route("/")
 def home():
     try:
@@ -215,16 +216,12 @@ def estadisticasTemporales(patrimonio):
             ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
         else:
             ultimaFecha = datetime.strptime(ultimaFecha, "%Y-%m-%d")
+        print(primeraFecha)
+        print(ultimaFecha)
         graficoTemporal=Code.GraficosEstadisticas_XacoMeterII.graficoTemporal(patrimonio, primeraFecha, ultimaFecha, conn, curs)
         graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircularTotal(patrimonio, primeraFecha, ultimaFecha, conn, curs)
         graficoMetricasPublicas=Code.GraficosEstadisticas_XacoMeterII.graficoMetricasPublicas(patrimonio, primeraFecha, ultimaFecha, conn, curs)
-        html = render_template('serieTemporal.html', graficoTemporal=graficoTemporal, graficoCircular=graficoCircular, graficoMetricasPublicas=graficoMetricasPublicas)
-        with open('temp.html', 'w') as f:
-            f.write(html)
-        p = Popen(['C:\\tmp\\wkhtmltopdf\\bin\\wkhtmltopdf.exe','--enable-local-file-access','--no-background','temp.html', 'outputPDF.pdf'])
-        p.wait()
-        os.remove('temp.html')
-        return render_template('serieTemporal.html', graficoTemporal=graficoTemporal, graficoCircular=graficoCircular, graficoMetricasPublicas=graficoMetricasPublicas)
+        return render_template('serieTemporal.html', graficoTemporal=graficoTemporal, graficoCircular=graficoCircular, graficoMetricasPublicas=graficoMetricasPublicas, fechaInicio=primeraFecha, fechaFin=ultimaFecha)
     
     except Exception as e:
         logging.error(f'{datetime.now()} - {e}')     
@@ -233,10 +230,14 @@ def estadisticasTemporales(patrimonio):
 @app.route('/logErrores')
 def LogErrores():
     try:
-        return send_file('errores.log', attachment_file='errores.log')
+        if 'identificado' in session:
+            return send_file('errores.log', attachment_file='errores.log')
+        else:
+            return redirect(url_for('home'))
     except:
         return redirect(url_for('home'))
-'''      
+
+'''   
 @app.route('/descargaPDF', methods=['POST'])
 def descarga():
     with open('outputPDF.pdf', 'rb') as f:
@@ -261,7 +262,8 @@ def handle_generic_error(error):
     return '<script>alert("Ha ocurrido un error en la aplicacion");</script>', 500
 
 def datosMapa():
-    locations=pd.read_csv('.\data\inventario_01.csv',sep=';',index_col=0)   
+    ruta_archivo = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'inventario_01.csv')
+    locations=pd.read_csv(ruta_archivo,sep=';',index_col=0)   
     return locations
 
 
