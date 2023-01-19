@@ -57,7 +57,7 @@ def Login():
     curs.close()
     conn.close()
     return render_template('login.html')
-    
+'''    
 @app.route('/Logout')
 def Logout():
     session.pop('identificado',None)
@@ -230,7 +230,7 @@ logging.getLogger().addHandler(file_handler)
 def handle_generic_error(error):
     logging.error(f'{datetime.now()} - APP ERROR - {error}')
     return '<script>alert("Ha ocurrido un error en la aplicacion");</script>', 500
-
+'''
 def datosMapa():
     locations=pd.read_csv('.\data\inventario_01.csv',sep=';',index_col=0)   
     return locations
