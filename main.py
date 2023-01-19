@@ -23,8 +23,10 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta (minutes = 30)
 app.config["SESSION_TYPE"] = "filesystem"
 DEBUG = False
 PORT = 5000
+''' 
 from dotenv import load_dotenv
 load_dotenv()
+''' 
 @app.route("/")
 def home():
     localidades=datosMapa()
@@ -35,7 +37,7 @@ def home():
         ubicaciones.append(localidades.loc[i,'denominacion'])  
     ubicacionesLista = [x.replace("'",' ') for x in ubicaciones]
     return render_template('home.html', marcadores = marcadores, ubicaciones=ubicacionesLista)
-
+''' 
 @app.route('/Login', methods = ['GET','POST'])
 def Login():
     conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
@@ -57,7 +59,7 @@ def Login():
     curs.close()
     conn.close()
     return render_template('login.html')
-'''    
+   
 @app.route('/Logout')
 def Logout():
     session.pop('identificado',None)
