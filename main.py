@@ -45,7 +45,7 @@ def Login():
     if ('usuario' and 'clave') in request.form:
         usuario = request.form.get ('usuario')
         clave = request.form.get ('clave')
-        query = ('''SELECT * FROM usuarios WHERE username = %s''')
+        query = (''SELECT * FROM usuarios WHERE username = %s'')
         curs.execute(query, [usuario])    
         datos = curs.fetchone()
         if datos:
@@ -209,7 +209,7 @@ def LogErrores():
     except:
         flash('Ha ocurrido una excepcion mientras se intentaba descargar el archivo')
         return redirect(request.referrer)
-'''      
+     
 @app.route('/descargaPDF', methods=['POST'])
 def descarga():
     with open('outputPDF.pdf', 'rb') as f:
@@ -218,7 +218,7 @@ def descarga():
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'attachment; filename=estadisticasTemporales.pdf'
     return response
-'''
+
 class ExceptionFilter(logging.Filter):
     def filter(self, record):
         return record.levelno >= logging.WARNING
