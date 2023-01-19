@@ -92,14 +92,13 @@ def AdministradorOpciones():
         logging.error(f'{datetime.now()} - {e}')     
         return redirect(url_for('home'))
 
-@app.route('/Administrador/ActualizarBaseDeDatos')
-def AdministradorActualizarVista():
-    return render_template('admin_Actualizar.html')
 
-@app.route('/Administrador/ActualizarBaseDeDatos', methods=['POST'])
+@app.route('/Administrador/ActualizarBaseDeDatos', methods=['GET','POST'])
 def AdministradorActualizar():
     try:
         if 'identificado' in session:
+            if request.method=='GET':
+                return render_template('admin_Actualizar.html')
             conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
             total=0
             curs = conn.cursor()
@@ -123,14 +122,13 @@ def AdministradorActualizar():
         logging.error(f'{datetime.now()} - {e}')     
         return redirect(url_for('home'))
     
-@app.route('/Administrador/CrearBaseDeDatos')
-def eligeFecha():
-    return render_template('admin_Crear.html')
 
-@app.route('/Administrador/CrearBaseDeDatos',methods = ['POST'])
+@app.route('/Administrador/CrearBaseDeDatos',methods = ['GET','POST'])
 def AdministradorCrear():
     try:
         if 'identificado' in session:
+            if request.method=='GET':
+                return render_template('admin_Crear.html')
             conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
             fechaElegida = request.form.get("fecha")
             cantDatos = int(request.form.get("datos"))
