@@ -23,10 +23,10 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta (minutes = 30)
 app.config["SESSION_TYPE"] = "filesystem"
 DEBUG = False
 PORT = 5000
-''' 
+
 from dotenv import load_dotenv
 load_dotenv()
-''' 
+ 
 @app.route("/")
 def home():
     localidades=datosMapa()
@@ -37,7 +37,7 @@ def home():
         ubicaciones.append(localidades.loc[i,'denominacion'])  
     ubicacionesLista = [x.replace("'",' ') for x in ubicaciones]
     return render_template('home.html', marcadores = marcadores, ubicaciones=ubicacionesLista)
-''' 
+
 @app.route('/Login', methods = ['GET','POST'])
 def Login():
     conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
@@ -45,7 +45,7 @@ def Login():
     if ('usuario' and 'clave') in request.form:
         usuario = request.form.get ('usuario')
         clave = request.form.get ('clave')
-        query = (''SELECT * FROM usuarios WHERE username = %s'')
+        query = ('''SELECT * FROM usuarios WHERE username = %s''')
         curs.execute(query, [usuario])    
         datos = curs.fetchone()
         if datos:
@@ -191,11 +191,13 @@ def estadisticasTemporales(patrimonio):
         graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircularTotal(patrimonio, primeraFecha, ultimaFecha, conn, curs)
         graficoMetricasPublicas=Code.GraficosEstadisticas_XacoMeterII.graficoMetricasPublicas(patrimonio, primeraFecha, ultimaFecha, conn, curs)
         html = render_template('serieTemporal.html', graficoTemporal=graficoTemporal, graficoCircular=graficoCircular, graficoMetricasPublicas=graficoMetricasPublicas)
+        '''
         with open('temp.html', 'w') as f:
             f.write(html)
         p = Popen(['C:\\tmp\\wkhtmltopdf\\bin\\wkhtmltopdf.exe','--enable-local-file-access','--no-background','temp.html', 'outputPDF.pdf'])
         p.wait()
         os.remove('temp.html')
+        '''
         return render_template('serieTemporal.html', graficoTemporal=graficoTemporal, graficoCircular=graficoCircular, graficoMetricasPublicas=graficoMetricasPublicas)
     except Exception as e:
         flash('Ha ocurrido una excepcion mientras se intentaban realizar las estadísticas')
@@ -218,7 +220,7 @@ def descarga():
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'attachment; filename=estadisticasTemporales.pdf'
     return response
-
+'''
 class ExceptionFilter(logging.Filter):
     def filter(self, record):
         return record.levelno >= logging.WARNING
