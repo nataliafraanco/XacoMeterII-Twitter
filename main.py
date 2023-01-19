@@ -24,7 +24,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 DEBUG = False
 PORT = 5000
 from dotenv import load_dotenv
-load_dotenv
+load_dotenv()
 @app.route("/")
 def home():
     localidades=datosMapa()
