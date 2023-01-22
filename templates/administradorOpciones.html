@@ -13,29 +13,17 @@
         <form method="post">
             <div>
                 <p>
-                <button type="button" class="btn-primary btn-lg btn-block" tittle="Actualizar">
-                    <a href="{{ url_for('AdministradorActualizar') }}" >
-                    Actualizar
-                    </a>
-                </button>
+                <a class="btn-primary btn-lg btn-block" href="{{ url_for('AdministradorActualizar') }}" >Actualizar base de datos</a>
                 </p>
             </div>
             <div>
                 <p>
-                <button type="button" class="btn-primary btn-lg btn-block" tittle="Crear">
-                    <a href="{{ url_for('AdministradorCrear') }}" >
-                    Crear
-                    </a>
-                </button>
+                <a class="btn-primary btn-lg btn-block" href="{{ url_for('AdministradorCrear') }}" >Crear base de datos</a>
                 </p>
             </div>
             <div>
                 <p>
-                <button type="button" class="btn-primary btn-lg btn-block" tittle="Logout">
-                    <a href="{{ url_for('Logout') }}" >
-                    Salir de la sesión
-                    </a> 
-                </button>
+                <a class="btn-primary btn-lg btn-block" href="{{ url_for('Logout') }}" >Salir de la sesión</a>    
                 </p>
             </div>               
         </form>
