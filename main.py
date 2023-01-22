@@ -15,6 +15,8 @@ from werkzeug.security import check_password_hash
 import pandas as pd
 import csv
 from subprocess import Popen
+from celery import Celery
+
 
 app = Flask(__name__)
 app.secret_key = 'Clave muy secreta sin revelacion'
@@ -26,7 +28,13 @@ PORT = 5000
 
 from dotenv import load_dotenv
 load_dotenv()
- 
+  
+app.config['CELERY_BROKER_URL'] = os.getenv("REDIS_URL")
+app.config['CELERY_RESULT_BACKEND'] = os.getenv("REDIS_URL")
+
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+
+
 @app.route("/")
 def home():
     try:
@@ -92,6 +100,26 @@ def AdministradorOpciones():
         logging.error(f'{datetime.now()} - {e}')     
         return redirect(url_for('home'))
 
+@celery.task
+def Recopilar_datos():
+    conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
+    total=0
+    curs = conn.cursor()
+    ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
+    ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
+    fechaActual = datetime.now()
+    fechaActual= fechaActual-timedelta(hours=1)
+    cantDatos = int(request.form.get("datos"))
+    tiempoCantidad = int(request.form.get("tiempoCantidad"))
+    tiempoDia = int(request.form.get("tiempoDia"))
+    Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+    flash ("La base de datos ha sido actualizada")
+    conn.commit()
+    curs.close()
+    conn.close()
+    print('Hola')
+    return '<script>alert("La base de datos ha sido actualizada");</script>'
+   
 
 @app.route('/Administrador/ActualizarBaseDeDatos', methods=['GET','POST'])
 def AdministradorActualizar():
@@ -99,22 +127,10 @@ def AdministradorActualizar():
         if 'identificado' in session:
             if request.method=='GET':
                 return render_template('admin_Actualizar.html')
-            conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
-            total=0
-            curs = conn.cursor()
-            ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
-            ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
-            fechaActual = datetime.now()
-            fechaActual= fechaActual-timedelta(hours=1)
-            cantDatos = int(request.form.get("datos"))
-            tiempoCantidad = int(request.form.get("tiempoCantidad"))
-            tiempoDia = int(request.form.get("tiempoDia"))
-            Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
-            flash ("La base de datos ha sido actualizada")
-            conn.commit()
-            curs.close()
-            conn.close()
-            return redirect(url_for('AdministradorOpciones'))
+            Recopilar_datos.apply_async()
+            flash('Los datos están siendo recopilados')
+            return redirect (url_for('Login'))
+            
         else:
             return redirect (url_for('Login'))
         
