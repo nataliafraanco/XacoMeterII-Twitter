@@ -13,10 +13,7 @@ import datetime
 from datetime import datetime,timedelta
 from werkzeug.security import check_password_hash
 import pandas as pd
-import csv
-from subprocess import Popen
-from celery import Celery
-
+import plotly.offline as plotly
 
 app = Flask(__name__)
 app.secret_key = 'Clave muy secreta sin revelacion'
@@ -28,12 +25,6 @@ PORT = 5000
 
 from dotenv import load_dotenv
 load_dotenv()
-  
-app.config['CELERY_BROKER_URL'] = os.getenv("REDIS_URL")
-app.config['CELERY_RESULT_BACKEND'] = os.getenv("REDIS_URL")
-
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-
 
 @app.route("/")
 def home():
@@ -62,6 +53,7 @@ def Login():
             query = ('''SELECT * FROM usuarios WHERE username = %s''')
             curs.execute(query, [usuario])    
             datos = curs.fetchone()
+            print(datos)
             if datos:
                 clavebd = datos['password']
                 if check_password_hash(clavebd, clave):
@@ -100,26 +92,6 @@ def AdministradorOpciones():
         logging.error(f'{datetime.now()} - {e}')     
         return redirect(url_for('home'))
 
-@celery.task
-def Recopilar_datos():
-    conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
-    total=0
-    curs = conn.cursor()
-    ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
-    ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
-    fechaActual = datetime.now()
-    fechaActual= fechaActual-timedelta(hours=1)
-    cantDatos = int(request.form.get("datos"))
-    tiempoCantidad = int(request.form.get("tiempoCantidad"))
-    tiempoDia = int(request.form.get("tiempoDia"))
-    Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
-    flash ("La base de datos ha sido actualizada")
-    conn.commit()
-    curs.close()
-    conn.close()
-    print('Hola')
-    return '<script>alert("La base de datos ha sido actualizada");</script>'
-   
 
 @app.route('/Administrador/ActualizarBaseDeDatos', methods=['GET','POST'])
 def AdministradorActualizar():
@@ -127,14 +99,29 @@ def AdministradorActualizar():
         if 'identificado' in session:
             if request.method=='GET':
                 return render_template('admin_Actualizar.html')
-            Recopilar_datos.apply_async()
-            flash('Los datos están siendo recopilados')
-            return redirect (url_for('Login'))
+            conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
+            total=0
+            curs = conn.cursor()
+            print("entro a recopilar datos 2do plano")
+            ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
+            ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
+            fechaActual = datetime.now()
+            fechaActual= fechaActual-timedelta(hours=1)
+            cantDatos = int(request.form.get("datos"))
+            tiempoCantidad = int(request.form.get("tiempoCantidad"))
+            tiempoDia = int(request.form.get("tiempoDia"))
+            Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+            flash ("La base de datos ha sido actualizada")
+            conn.commit()
+            curs.close()
+            conn.close()
             
+            return redirect (url_for('home'))         
         else:
             return redirect (url_for('Login'))
         
     except Exception as e:
+        flash ("La base de datos no ha sido actualizada")
         logging.error(f'{datetime.now()} - {e}')     
         return redirect(url_for('home'))
     
@@ -180,7 +167,7 @@ def AdministradorCrear():
                 total = 0
             
                 #Si existen datos, para aumentar el rendimiento de la web y no tener que hacer tantas consultas a la API se reutilizan datos de la BBDD
-                if primeraFecha<=fechaElegida<ultimaFecha:
+                if primeraFecha<=fechaElegida<=ultimaFecha:
                     #Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
                     Code.CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
                     Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
@@ -214,33 +201,74 @@ def AdministradorCrear():
     except Exception as e:
         logging.error(f'{datetime.now()} - {e}')     
         return redirect(url_for('home'))
-
+'''
 @app.route('/estadisticasTemporales/<string:patrimonio>')    
 def estadisticasTemporales(patrimonio):
     try:
         conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
-        curs = conn.cursor()
+        curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         primeraFecha = request.args.get('fechaInicio')
         ultimaFecha = request.args.get('fechaFin')
         if primeraFecha==None or len(primeraFecha)==None:
             primeraFecha=Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)[0][0]
         else:
-            primeraFecha = datetime.strptime(primeraFecha, "%Y-%m-%d")
+            primeraFecha = datetime.strptime(primeraFecha, "%Y/%m/%d")
         if ultimaFecha==None or len(ultimaFecha)==None:
             ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
         else:
-            ultimaFecha = datetime.strptime(ultimaFecha, "%Y-%m-%d")
+            ultimaFecha = datetime.strptime(ultimaFecha, "%Y/%m/%d")
         print(primeraFecha)
         print(ultimaFecha)
-        graficoTemporal=Code.GraficosEstadisticas_XacoMeterII.graficoTemporal(patrimonio, primeraFecha, ultimaFecha, conn, curs)
-        graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircularTotal(patrimonio, primeraFecha, ultimaFecha, conn, curs)
-        graficoMetricasPublicas=Code.GraficosEstadisticas_XacoMeterII.graficoMetricasPublicas(patrimonio, primeraFecha, ultimaFecha, conn, curs)
+        diccionario=Code.CrearTablasBD_XacoMeterII.sacaDatosPatrimonio(conn, curs, primeraFecha, ultimaFecha, patrimonio)
+        print(diccionario)
+        graficoTemporal=Code.GraficosEstadisticas_XacoMeterII.graficoTemporal(diccionario)
+        graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircularTotal(diccionario)
+        graficoMetricasPublicas=Code.GraficosEstadisticas_XacoMeterII.graficoMetricasPublicas(diccionario)
         return render_template('serieTemporal.html', graficoTemporal=graficoTemporal, graficoCircular=graficoCircular, graficoMetricasPublicas=graficoMetricasPublicas, fechaInicio=primeraFecha, fechaFin=ultimaFecha)
     
     except Exception as e:
         logging.error(f'{datetime.now()} - {e}')     
         return redirect(url_for('home'))
+'''    
+@app.route('/estadisticasTemporales/<string:patrimonio>')    
+def estadisticasTemporales(patrimonio):
+    try:
+        conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
+        curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        patrimonio = str(patrimonio.replace('+',' '))
+        primeraFecha = request.args.get('fechaInicio')
+        ultimaFecha = request.args.get('fechaFin')
+        if primeraFecha==None or len(primeraFecha)==None:
+            primeraFecha=Code.CrearTablasBD_XacoMeterII.primeraFechaEstadisticas(patrimonio,conn,curs)['date']
+        else:
+            primeraFecha = datetime.strptime(primeraFecha, "%Y/%m/%d")
+        if ultimaFecha==None or len(ultimaFecha)==None:
+            ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFechaEstadisticas(patrimonio,conn,curs)['date']
+        else:
+            ultimaFecha = datetime.strptime(ultimaFecha, "%Y/%m/%d")
+        print(primeraFecha)
+        print(ultimaFecha)
+        diccionario=Code.CrearTablasBD_XacoMeterII.sacaDatosPatrimonio(conn, curs, primeraFecha, ultimaFecha, patrimonio)
+        total=Code.CrearTablasBD_XacoMeterII.cuentaFilasTotales(conn, curs)
+        print(total)
+        date_range = pd.date_range(primeraFecha, ultimaFecha)
+        date_range_df = pd.DataFrame({'date': date_range})
+        titulos = ['date', 'rt', 'like', 'rp', 'filas']
+        df = pd.DataFrame(diccionario, columns=titulos)
+        df['date'] = pd.to_datetime(df['date'])
+        merged_data = pd.merge(df, date_range_df, on='date', how='right')
+        merged_data = merged_data.fillna(0)
+        print(merged_data)
+        graficoLineas=Code.GraficosEstadisticas_XacoMeterII.graficoLineas(merged_data)
+        print('ggg')
+        graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircular(merged_data,total)
+        print('hhh')
+        graficoBarras=Code.GraficosEstadisticas_XacoMeterII.graficoBarras(merged_data,total)
+        return render_template('serieTemporal.html', graficoLineas=graficoLineas, graficoCircular=graficoCircular, graficoBarras=graficoBarras, fechaInicio=primeraFecha, fechaFin=ultimaFecha)
     
+    except Exception as e:
+        logging.error(f'{datetime.now()} - {e}')     
+        return redirect(url_for('home'))
 @app.route('/logErrores')
 def LogErrores():
     try:
@@ -251,16 +279,6 @@ def LogErrores():
     except:
         return redirect(url_for('home'))
 
-'''   
-@app.route('/descargaPDF', methods=['POST'])
-def descarga():
-    with open('outputPDF.pdf', 'rb') as f:
-        pdf = f.read()
-    response = make_response(pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'attachment; filename=estadisticasTemporales.pdf'
-    return response
-'''
 class ExceptionFilter(logging.Filter):
     def filter(self, record):
         return record.levelno >= logging.WARNING

@@ -1,36 +1,44 @@
 {% extends "base2.html" %}
 {% block content %}
+<body class="home">
 <center>
     <div class="dashboard-app">
-        <div class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Selecciona un patrimonio</a>
-            <div class="dropdown-menu">
-                <span id="input">
+        <div style="position: absolute; top: 0%; bottom: 0; left: 0%; right: 0;">
+            <div>
+                <select id="selectUbicaciones" class="custom-select"></select>
                 <script>
-                    var contador={{ubicaciones}}.length
-                    var ubicaciones = {{ ubicaciones|tojson }}
-                    var lista =[]
-                    for{
-                        patrimonio = ubicaciones[i].split(" ").join("+");
-                        function generateURL(param_value) {
-                            const baseURL = '/estadisticasTemporales/';
-                            return baseURL + patrimonio;
-                        }
-                        lista.push('<a class="dropdown-item" href="' + generateURL(patrimonio) + '">' + ubicaciones[i] + '</a>');
-                    document.getElementById('input').innerHTML = lista ;
-                    };             
+                    $(document).ready(function(){
+                        debugger;
+                        var ubicaciones = {{ ubicaciones|tojson }};
+                        $('#selectUbicaciones')
+                        .append($("<option selected='selected' value='Selecciona un patrimonio para obtener las estadísticas temporales'></option>")
+                                   .text("Selecciona un patrimonio para obtener las estadísticas temporales"));
+                        $.each(ubicaciones, function(ubicacion) {   
+                            $('#selectUbicaciones')
+                                .append($("<option></option>")
+                                           .attr("value", ubicaciones[ubicacion])
+                                           .text(ubicaciones[ubicacion])); 
+                       });
+                    });
+                    $('#selectUbicaciones').on('change', function() {
+                        var textoSeleccionado=$("#selectUbicaciones option:selected").val();
+                        var hrefredirect=textoSeleccionado.split(" ").join("+");
+                        window.location.href = "/estadisticasTemporales/"+ hrefredirect;
+                        
+                      });
+                                 
                 </script>
             </div>
         </div>
 
         </script>
-        <div style="position: absolute; top: 0; bottom: 0; left: 238px; right: 0;">
-            <div id="map" style="height: 100%;"></div>
+        <div style="position: absolute; top: 10%; bottom: 0; left: 0%; right: 0;">
+            <div id="map" style="height: 100%"></div>
             <script type="text/javascript">
                 // Crear un mapa y especificar su div contenedor y opciones
                 var map = L.map('map', {
                     center: [42.37014,-5.030849],
-                    zoom: 9
+                    zoom: 8
                 });
                 // Añadir capas al mapa   
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -51,8 +59,8 @@
                         const baseURL = '/estadisticasTemporales/';
                         return baseURL + patrimonio;
                     }
-                    
-                    marker.bindPopup('<a href="' + generateURL(patrimonio) + '">' + ubicaciones[i] + '</a>').openPopup();
+                    marker.bindTooltip(ubicaciones[i], {permanent: false});
+                    marker.bindPopup('<a href="' + generateURL(patrimonio) + '">' + ubicaciones[i] + '</a>');
                 };             
         </script>
         

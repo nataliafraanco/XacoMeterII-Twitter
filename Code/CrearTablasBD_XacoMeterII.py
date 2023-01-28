@@ -1,7 +1,6 @@
-import csv
 from os import remove
 from datetime import date
-
+import dateutil
 def borradoTablas(primeraFecha,ultimaFecha,conn,curs):
     primeraFecha=primeraFecha.date()
     print(primeraFecha)
@@ -28,25 +27,61 @@ def actualizaTablas(patrimonio, conn, curs):
     return index 
 
 def ultimaFecha(index, conn, curs):
-    #Pensar qué hacer si no hay bd
     buscaFecha = ('''SELECT MAX(Tweet_CreatedAt) FROM TWEETS_PATRIMONIOS WHERE Patrimonio_Id = %s''')
     curs.execute(buscaFecha, [index]) 
     fecha=curs.fetchall() 
     return fecha
 
 def primeraFecha(conn, curs):
-    #Pensar qué hacer si no hay bd
     buscaFecha = ('''SELECT MIN(Tweet_CreatedAt) FROM TWEETS_PATRIMONIOS''')
     curs.execute(buscaFecha) 
     primerafecha=curs.fetchall() 
     return primerafecha
 
 def ultimaFecha2(conn, curs):
-    #Pensar qué hacer si no hay bd
     buscaFecha = ('''SELECT MAX(Tweet_CreatedAt) FROM TWEETS_PATRIMONIOS''')
     curs.execute(buscaFecha) 
     ultimafecha=curs.fetchall() 
     return ultimafecha
+
+def primeraFechaEstadisticas(patrimonio, conn, curs):
+    buscaFecha = ('''SELECT MIN(Tweet_CreatedAt) as date
+                  FROM TWEETS_PATRIMONIOS 
+                  WHERE TWEETS_PATRIMONIOS.Borrado=False
+                ''')
+    curs.execute(buscaFecha, [patrimonio]) 
+    fecha=curs.fetchone() 
+    print(fecha)
+    return fecha
+
+
+def ultimaFechaEstadisticas(patrimonio, conn, curs):
+    buscaFecha = ('''SELECT MAX(Tweet_CreatedAt) as date
+                  FROM TWEETS_PATRIMONIOS 
+                  WHERE TWEETS_PATRIMONIOS.Borrado=False
+                ''')
+    curs.execute(buscaFecha, [patrimonio]) 
+    fecha=curs.fetchone() 
+    return fecha
+
+def sacaDatosPatrimonio(conn, curs, fechaInicio, fechaFin, patrimonio):
+    sacaDatos =('''SELECT TWEETS_PATRIMONIOS.Tweet_CreatedAt as date, SUM(TWEETS_PATRIMONIOS.Retweet_Count) as rt, SUM(TWEETS_PATRIMONIOS.Like_Count) as like, SUM(TWEETS_PATRIMONIOS.Reply_Count) as rp, COUNT(*) as filas
+                FROM TWEETS_PATRIMONIOS
+                WHERE TWEETS_PATRIMONIOS.Patrimonio_Id = (SELECT IDPatrimonio FROM LISTADO_PATRIMONIOS WHERE Patrimonio = %s) 
+                AND (TWEETS_PATRIMONIOS.Tweet_CreatedAt >= %s AND TWEETS_PATRIMONIOS.Tweet_CreatedAt <= %s)
+                AND TWEETS_PATRIMONIOS.Borrado = ('False')
+                GROUP BY TWEETS_PATRIMONIOS.Tweet_CreatedAt''')
+    variables = patrimonio, fechaInicio, fechaFin
+    curs.execute(sacaDatos, variables)
+    registros = curs.fetchall()
+    return registros
+
+def cuentaFilasTotales(conn, curs):
+    cuentaFilasTotales =('''SELECT COUNT(*) FROM TWEETS_PATRIMONIOS
+                ''')
+    curs.execute(cuentaFilasTotales)
+    registros = curs.fetchone()
+    return registros
 
 def cuentaDatos(conn, curs, fecha, patrimonio):
     cuentaTweets =('''SELECT COUNT (*) FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
@@ -130,32 +165,35 @@ def cuentaFilasPatrimonio(conn,curs,fechaIni, fechaFin, patrimonio):
     numeroDatos = curs.fetchone()
     return numeroDatos
 
-def insertaDatos(id, patrimonio,conn,curs):
-
-    insertarTablaPatrimonio=('''INSERT INTO LISTADO_PATRIMONIOS(IDPatrimonio, Patrimonio) 
+def insertarDatos(PatrimonioId, diccionarioTweets, patrimonio, conn, curs):
+    if ('data' in diccionarioTweets)  :
+        for tweet, usuario in zip (diccionarioTweets['data'], diccionarioTweets['includes']['users']):
+            text = str(tweet['text'])
+            tweet_id = int(tweet['id'])
+            username = str(usuario['username'])
+            createdAt = dateutil.parser.parse(tweet['created_at'])
+            if ('geo' in tweet):   
+                geo = str(tweet['geo'])
+            else:
+                geo = "No hay geolocalización"
+            lang = str(tweet['lang'])
+            text = str(tweet['text'])
+            verified = bool(usuario['verified'])
+            retweet_count = int(tweet['public_metrics']['retweet_count'])
+            like_count = int(tweet['public_metrics']['like_count'])
+            reply_count = int(tweet['public_metrics']['reply_count'])
+            if not text.startswith("RT"):
+                insertarTablaPatrimonio=('''INSERT INTO LISTADO_PATRIMONIOS(IDPatrimonio, Patrimonio) 
                              VALUES (%s,%s) 
-                             ON CONFLICT (IDPatrimonio) DO UPDATE SET Patrimonio=(%s);''') 
-    
-    insertarTablaTweets = ('''INSERT INTO TWEETS_PATRIMONIOS
+                             ON CONFLICT (IDPatrimonio) DO UPDATE SET Patrimonio=(%s);''')
+                variablesPatrimonio = PatrimonioId, patrimonio, patrimonio
+                curs.execute(insertarTablaPatrimonio, variablesPatrimonio)
+     
+                insertarTablaTweets = ('''INSERT INTO TWEETS_PATRIMONIOS
                            (Patrimonio_Id, Tweet_Id, Lugar_GeoCoordenadas, Tweet_Lang, Tweet_Texto, User_Username, User_Verified,
                           Retweet_Count, Like_Count, Reply_Count, Tweet_CreatedAt, Borrado) 
                              VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'False') 
                              ON CONFLICT (Tweet_Id) DO UPDATE SET Borrado=('False');''')
-    #Inserta datos en las tablas
-    variables = id, patrimonio, patrimonio
-    curs.execute(insertarTablaPatrimonio, variables)
-    
-    #Definimos la ruta del archivo CSV
-    CSVpath = "data/temporal.csv"
-    csvFile = open(CSVpath, "r", encoding='utf8')
-    readCSV = csv.reader(csvFile, delimiter=',')
-    for row in readCSV:
-              rowVariables = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]
-              curs.execute(insertarTablaTweets, rowVariables)
-    
-    csvFile.close()      
-    remove("data/temporal.csv")
-    
-
-    
+                variablesTweets = PatrimonioId, tweet_id, geo, lang, text, username, verified, retweet_count, like_count,reply_count, createdAt
+                curs.execute(insertarTablaTweets, variablesTweets)
     

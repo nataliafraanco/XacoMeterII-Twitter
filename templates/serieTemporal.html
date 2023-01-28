@@ -1,28 +1,41 @@
 {% extends "base2.html" %}
 {% block content %}
-        <div class="container">
-            <div class="row center-form">
-                <form >
-                    Fecha Inicio: <input type="date" min={{fechaInicio}} value={{fechaInicio}} name="fechaInicio">
-                    Fecha Fin: <input type="date" max={{fechaFin}} value={{fechaFin}} name="fechaFin">
-                    <input type="submit" value="Buscar">
-                </form>
-            </div>
-            <div class="row">
-              <div class="col-6">
-                <img  class="img-fluid" src="data:image/png;base64, {{ graficoTemporal }}">
-              </div>
-              <div class="col-6">
-                <img  class="img-fluid" src="data:image/png;base64, {{ graficoCircular }}">
-              </div>
-            </div>
-            <div class="row">
-                  <img  class="img-fluid" src="data:image/png;base64, {{ graficoMetricasPublicas }}">
-              </div>
-            <div class="row" align="right">
-              <a class="btn-primary btn-lg btn-block" href="{{ url_for('home') }}" >Volver</a>
-                            
-            </div>
-        </div>
-        {% endblock %}
+<div class="container" id="date-container">
+  <div class="row">
+        <form >
+          Fecha Inicio: <input type="date" min={{fechaInicio}} value={{fechaInicio}} name="fechaInicio">
+          Fecha Fin: <input type="date" max={{fechaFin}} value={{fechaFin}} name="fechaFin">
+          <input type="submit" value="Buscar">
+      </form>
+  </div>
+</div>
+<div class="container" id="chart-container">
+  <div class="row">
+    <div class="col-md-6 mx-auto">
+      <div id="graficoLineas"></div>
+    </div>
+    <div class="col-md-6 mx-auto">
+      <div id="graficoCircular"></div>
+    </div>
+  </div>
+</div>
+<div class="container" id="chart-container">
+  <div class="row">
+    <div id="graficoBarras"></div>
+  </div>
+</div>
+<script>
+  Plotly.newPlot('graficoLineas', {{ graficoLineas|safe }});
+  Plotly.newPlot('graficoCircular', {{ graficoCircular|safe }});
+  Plotly.newPlot('graficoBarras', {{ graficoBarras|safe }});
+</script>
+       
+
+<div class="row">
+  <div class="col-12" id="back-button">
+    <a class="btn-primary btn-lg btn-block float-left" style="width: 30%; position:absolute; left: 30%" href="{{ url_for('home') }}" >Volver</a>
+                  
+  </div>
+</div>
+{% endblock %}
 

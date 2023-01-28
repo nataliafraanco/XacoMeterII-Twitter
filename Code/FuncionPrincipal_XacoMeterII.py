@@ -1,6 +1,4 @@
 import requests
-import csv
-import dateutil.parser
 import logging
 from datetime import datetime
 import os
@@ -48,44 +46,13 @@ def conexionEndpoint(url, headers, parameters, next_token = None):
     return response.json()
 
 #Definimos las variables y hacemos las llamadas a las funciones
-def funcionPrincipal(patrimonioId, PalabraClave, fecha, fechaFin):
+def funcionPrincipal(PalabraClave, fecha, fechaFin):
     bearer_token = auth()
     headers = accederEncabezados(bearer_token)
     keyword = PalabraClave
     max_results = 500
     url = solicitudURL(keyword, max_results, fecha, fechaFin)
     dict_tweets = conexionEndpoint(url[0], headers, url[1])
-    #print(json.dumps(dict_tweets, indent=4, sort_keys=True))
-    return insertarDatosCSV(patrimonioId, dict_tweets)
-    
-#Creamos el fichero CSV y le rellenamos con la información
-def insertarDatosCSV(patrimonioId, diccionarioTweets):
-
-    #Añadimos el archivo CSV en una ruta temporal para que no tenga problemas en cuanto a permisos
-    CSVPath = "data/temporal.csv"
-    csvFile = open(CSVPath , "a", newline="", encoding='utf-8')
-    csvWriter = csv.writer(csvFile)
-    #Sacamos la información del archivo json y la añadimos linea a linea al archivo CSV
-    if ('data' in diccionarioTweets)  :
-        for tweet, usuario in zip (diccionarioTweets['data'], diccionarioTweets['includes']['users']):
-            text = tweet['text']
-            tweet_id = tweet['id']
-            username = usuario['username']
-            createdAt = dateutil.parser.parse(tweet['created_at'])
-            if ('geo' in tweet):   
-                geo = tweet['geo']
-            else:
-                geo = "No hay geolocalización"
-            lang = tweet['lang']
-            text = tweet['text']
-            verified = usuario['verified']
-            retweet_count = tweet['public_metrics']['retweet_count']
-            like_count = tweet['public_metrics']['like_count']
-            reply_count = tweet['public_metrics']['reply_count']
-            if not text.startswith("RT"):
-                lineaCSV = [patrimonioId, tweet_id, geo, lang, text, username, verified, retweet_count, like_count,reply_count, createdAt]
-                csvWriter.writerow(lineaCSV)
-        #Cerramos el fichero CSV
-        csvFile.close()
+    return dict_tweets
         
 
