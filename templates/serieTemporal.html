@@ -2,27 +2,43 @@
 {% block content %}
 <div class="container" id="date-container">
   <div class="row">
-        <form >
-          Fecha Inicio: <input type="date" min={{fechaInicio}} value={{fechaInicio}} name="fechaInicio">
-          Fecha Fin: <input type="date" max={{fechaFin}} value={{fechaFin}} name="fechaFin">
-          <input type="submit" value="Buscar">
-      </form>
+        <form class="col-12">
+          <div class="row">
+            <div class="col-3 mb-3 ml-3">
+              <label for="FechaInicio">Fecha inicio:&nbsp;</label>
+              <input id="FechaInicio" type="date" min={{primeraBD}} value={{fechaInicio}} name="fechaInicio" style="
+              width: 50%;">
+            </div>
+            <div class="col-3 mb-3">
+              <label for="FechaFin">Fecha fin:&nbsp;</label>
+              <input id ="FechaFin" type="date" max={{ultimaBD}} value={{fechaFin}} name="fechaFin" >
+            </div>
+            <div class="col-2 mb-3 ml-n1">
+              <input type="submit" value="Buscar" class="btn btn-outline-secondary btn-sm">
+              <a class="btn btn-sm btn-outline-dark" href="{{ url_for('home') }}" >Volver</a>
+            </div>
+          </div>
+        </form>
   </div>
 </div>
 <div class="container" id="chart-container">
   <div class="row">
-    <div class="col-md-6 mx-auto">
-      <div id="graficoLineas"></div>
+    <div class="col-md-7 ">
+      <div class="row">
+        <div id="graficoLineas"></div>
+      </div>
     </div>
-    <div class="col-md-6 mx-auto">
-      <div id="graficoCircular"></div>
+    <div class="col-md-2 ">
+      <div class="row">
+        <div id="graficoCircular"></div>
+      </div>
     </div>
   </div>
 </div>
-<div class="container" id="chart-container">
-  <div class="row">
-    <div id="graficoBarras"></div>
-  </div>
+    <div class="container" id="chart-container">
+      <div class="col-md-12 ml-n5">
+        <div id="graficoBarras"></div>
+    </div>
 </div>
 <script>
   Plotly.newPlot('graficoLineas', {{ graficoLineas|safe }});
@@ -31,11 +47,5 @@
 </script>
        
 
-<div class="row">
-  <div class="col-12" id="back-button">
-    <a class="btn-primary btn-lg btn-block float-left" style="width: 30%; position:absolute; left: 30%" href="{{ url_for('home') }}" >Volver</a>
-                  
-  </div>
-</div>
 {% endblock %}
 

@@ -15,19 +15,25 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
     <title>XacoMeterII</title>
   </head>
   <body> 
     <div class='dashboard'>
 
-        <div id="sidebar" class="dashboard-nav col-2">
-          {%include 'barraLateral.html'%} 
-        </div>
+          <div id="sidebar" class="dashboard-nav col-1">
+            {%include 'barraLateral.html'%} 
+          </div>
 
-        <div class="dashboard-app col-10">
-          {% block content %}
-          {% endblock %}
-        </div>
+          <div class="dashboard-app col-9 ml-5">
+            <div class="row">
+            {% block content %}
+            {% endblock %}
+            </div>
+          </div>
+
+    
         <script>
           {% with mensajes =get_flashed_messages() %}
           {% if mensajes %}

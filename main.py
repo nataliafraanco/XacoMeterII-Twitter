@@ -20,7 +20,7 @@ app.secret_key = 'Clave muy secreta sin revelacion'
 app.config["SESSION_PERMANENT"] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta (minutes = 30)
 app.config["SESSION_TYPE"] = "filesystem"
-DEBUG = False
+DEBUG = True
 PORT = 5000
 
 from dotenv import load_dotenv
@@ -201,35 +201,7 @@ def AdministradorCrear():
     except Exception as e:
         logging.error(f'{datetime.now()} - {e}')     
         return redirect(url_for('home'))
-'''
-@app.route('/estadisticasTemporales/<string:patrimonio>')    
-def estadisticasTemporales(patrimonio):
-    try:
-        conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
-        curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        primeraFecha = request.args.get('fechaInicio')
-        ultimaFecha = request.args.get('fechaFin')
-        if primeraFecha==None or len(primeraFecha)==None:
-            primeraFecha=Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)[0][0]
-        else:
-            primeraFecha = datetime.strptime(primeraFecha, "%Y/%m/%d")
-        if ultimaFecha==None or len(ultimaFecha)==None:
-            ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
-        else:
-            ultimaFecha = datetime.strptime(ultimaFecha, "%Y/%m/%d")
-        print(primeraFecha)
-        print(ultimaFecha)
-        diccionario=Code.CrearTablasBD_XacoMeterII.sacaDatosPatrimonio(conn, curs, primeraFecha, ultimaFecha, patrimonio)
-        print(diccionario)
-        graficoTemporal=Code.GraficosEstadisticas_XacoMeterII.graficoTemporal(diccionario)
-        graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircularTotal(diccionario)
-        graficoMetricasPublicas=Code.GraficosEstadisticas_XacoMeterII.graficoMetricasPublicas(diccionario)
-        return render_template('serieTemporal.html', graficoTemporal=graficoTemporal, graficoCircular=graficoCircular, graficoMetricasPublicas=graficoMetricasPublicas, fechaInicio=primeraFecha, fechaFin=ultimaFecha)
-    
-    except Exception as e:
-        logging.error(f'{datetime.now()} - {e}')     
-        return redirect(url_for('home'))
-'''    
+
 @app.route('/estadisticasTemporales/<string:patrimonio>')    
 def estadisticasTemporales(patrimonio):
     try:
@@ -238,14 +210,12 @@ def estadisticasTemporales(patrimonio):
         patrimonio = str(patrimonio.replace('+',' '))
         primeraFecha = request.args.get('fechaInicio')
         ultimaFecha = request.args.get('fechaFin')
+        primeraFechaBD=Code.CrearTablasBD_XacoMeterII.primeraFechaEstadisticas(patrimonio,conn,curs)['date']
+        ultimaFechaBD=Code.CrearTablasBD_XacoMeterII.ultimaFechaEstadisticas(patrimonio,conn,curs)['date']
         if primeraFecha==None or len(primeraFecha)==None:
-            primeraFecha=Code.CrearTablasBD_XacoMeterII.primeraFechaEstadisticas(patrimonio,conn,curs)['date']
-        else:
-            primeraFecha = datetime.strptime(primeraFecha, "%Y/%m/%d")
+            primeraFecha=primeraFechaBD
         if ultimaFecha==None or len(ultimaFecha)==None:
-            ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFechaEstadisticas(patrimonio,conn,curs)['date']
-        else:
-            ultimaFecha = datetime.strptime(ultimaFecha, "%Y/%m/%d")
+            ultimaFecha=ultimaFechaBD
         print(primeraFecha)
         print(ultimaFecha)
         diccionario=Code.CrearTablasBD_XacoMeterII.sacaDatosPatrimonio(conn, curs, primeraFecha, ultimaFecha, patrimonio)
@@ -264,11 +234,12 @@ def estadisticasTemporales(patrimonio):
         graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircular(merged_data,total)
         print('hhh')
         graficoBarras=Code.GraficosEstadisticas_XacoMeterII.graficoBarras(merged_data,total)
-        return render_template('serieTemporal.html', graficoLineas=graficoLineas, graficoCircular=graficoCircular, graficoBarras=graficoBarras, fechaInicio=primeraFecha, fechaFin=ultimaFecha)
+        return render_template('serieTemporal.html', graficoLineas=graficoLineas, graficoCircular=graficoCircular, graficoBarras=graficoBarras, fechaInicio=primeraFecha, fechaFin=ultimaFecha, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
     
     except Exception as e:
         logging.error(f'{datetime.now()} - {e}')     
         return redirect(url_for('home'))
+    
 @app.route('/logErrores')
 def LogErrores():
     try:
