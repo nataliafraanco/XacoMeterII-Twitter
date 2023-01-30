@@ -2,7 +2,7 @@
 {% block content %}
 <body class="home">
 <center>
-    <div class="row">
+    
         <div style="position: absolute; top: 0%; bottom: 0; left: 0%; right: 0%;">
             <div>
                 <select id="selectUbicaciones" class="custom-select"></select>
@@ -34,7 +34,7 @@
         </div>
 
         </script>
-        <div style="position: absolute; top: 5%; bottom: 5%; left: 0%; right: 0;">
+        <div style="position: absolute; top: 5%; bottom: 2%; left: 0%; right: 0;">
             <div id="map" style="height: 100%"></div>
             <script type="text/javascript">
                 // Crear un mapa y especificar su div contenedor y opciones
@@ -65,6 +65,6 @@
                     marker.bindPopup('<a href="' + generateURL(patrimonio) + '">' + ubicaciones[i] + '</a>');
                 };             
         </script>
-    </div>
+
 </center> 
 {% endblock %}

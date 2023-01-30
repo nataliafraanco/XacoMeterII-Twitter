@@ -123,7 +123,7 @@ h1, .h1 {
     -webkit-flex-grow: 2;
     -ms-flex-positive: 2;
     flex-grow: 2;
-    margin-top: 3%;
+    margin-top: 2%;
 }
 
 .dashboard-content {
@@ -131,7 +131,7 @@ h1, .h1 {
     -webkit-flex-grow: 2;
     -ms-flex-positive: 2;
     flex-grow: 2;
-    padding: 10%;
+    padding: 0%;
 }
 
 .dashboard-nav {
@@ -234,7 +234,7 @@ h1, .h1 {
 }
 
 .dashboard-nav-item {
-    min-height: 30%;
+    min-height: 10%;
     padding: 5% 30% 5% 20%;
     display: -webkit-box;
     display: -webkit-flex;
@@ -326,6 +326,7 @@ h1, .h1 {
     border-color: rgba(243, 226, 77, 0.993);
 
 }
+
 .custom-select option:first-child {
     background-color:rgba(245, 242, 97, 0.72);
     color: rgb(41, 42, 126);
@@ -473,7 +474,7 @@ nav ul li:hover {
 
 @media (max-width: 80%) {
     .dashboard-content {
-        padding: 15px 0px;
+        padding: 15% 0%;
     }
 }
 

@@ -234,7 +234,7 @@ def estadisticasTemporales(patrimonio):
         graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircular(merged_data,total)
         print('hhh')
         graficoBarras=Code.GraficosEstadisticas_XacoMeterII.graficoBarras(merged_data,total)
-        return render_template('serieTemporal.html', graficoLineas=graficoLineas, graficoCircular=graficoCircular, graficoBarras=graficoBarras, fechaInicio=primeraFecha, fechaFin=ultimaFecha, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
+        return render_template('serieTemporal.html', nombre=patrimonio, graficoLineas=graficoLineas, graficoCircular=graficoCircular, graficoBarras=graficoBarras, fechaInicio=primeraFecha, fechaFin=ultimaFecha, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
     
     except Exception as e:
         logging.error(f'{datetime.now()} - {e}')     
