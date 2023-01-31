@@ -76,6 +76,21 @@ def sacaDatosPatrimonio(conn, curs, fechaInicio, fechaFin, patrimonio):
     registros = curs.fetchall()
     return registros
 
+def sacaDatosPatrimonioDescargar(conn, curs, fechaInicio, fechaFin, patrimonio):
+    sacaDatos =('''SELECT LISTADO_PATRIMONIOS.Patrimonio, Patrimonio_Id, Tweet_Id, Lugar_GeoCoordenadas, Tweet_Lang, Tweet_Texto, 
+                    User_Username, User_Verified,
+                    Retweet_Count, Like_Count, Reply_Count, Tweet_CreatedAt, Borrado
+                FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
+                ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
+                WHERE LISTADO_PATRIMONIOS.Patrimonio = %s
+                AND (TWEETS_PATRIMONIOS.Tweet_CreatedAt >= %s AND TWEETS_PATRIMONIOS.Tweet_CreatedAt <= %s) 
+                AND TWEETS_PATRIMONIOS.Borrado = ('False')
+                ''')
+    variables = patrimonio, fechaInicio, fechaFin
+    curs.execute(sacaDatos, variables)
+    registros = curs.fetchall()
+    return registros
+
 def cuentaFilasTotales(conn, curs):
     cuentaFilasTotales =('''SELECT COUNT(*) FROM TWEETS_PATRIMONIOS
                 ''')

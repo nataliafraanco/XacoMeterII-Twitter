@@ -25,9 +25,10 @@
             <label for="FechaFin">Fecha fin:&nbsp;</label>
             <input id ="FechaFin" type="date" max={{ultimaBD}} value={{fechaFin}} name="fechaFin" >
           </div>
-          <div class="col-2 mb-3 ml-n1">
+          <div class="col-4 mb-3 ml-n2">
             <input type="submit" value="Buscar" class="btn btn-outline-secondary btn-sm">
             <a class="btn btn-sm btn-outline-dark" href="{{ url_for('home') }}" >Volver</a>
+            
           </div>
         </div>
       </form>
@@ -51,6 +52,14 @@
       <div class="col-md-12 ml-n5">
         <div id="graficoBarras"></div>
     </div>
+</div>
+<div class="row">
+  <div class="col-12 mb-3 ml-3">
+    <center>
+    <a href="{{ url_for('descargar_csv', primeraFecha=fechaInicio, ultimaFecha=fechaFin, patrimonio=nombre) }}" 
+            class="btn btn-sm btn-outline-dark">Descargar CSV</a>     
+    </center>      
+  </div> 
 </div>
 <script>
   Plotly.newPlot('graficoLineas', {{ graficoLineas|safe }});

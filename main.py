@@ -222,24 +222,43 @@ def estadisticasTemporales(patrimonio):
         total=Code.CrearTablasBD_XacoMeterII.cuentaFilasTotales(conn, curs)
         print(total)
         date_range = pd.date_range(primeraFecha, ultimaFecha)
-        date_range_df = pd.DataFrame({'date': date_range})
-        titulos = ['date', 'rt', 'like', 'rp', 'filas']
+        date_range_df = pd.DataFrame({'Fechas': date_range})
+        titulos = ['Fechas', 'Retweet', 'Like', 'Reply', 'filas']
         df = pd.DataFrame(diccionario, columns=titulos)
-        df['date'] = pd.to_datetime(df['date'])
-        merged_data = pd.merge(df, date_range_df, on='date', how='right')
+        df['Fechas'] = pd.to_datetime(df['Fechas'])
+        merged_data = pd.merge(df, date_range_df, on='Fechas', how='right')
         merged_data = merged_data.fillna(0)
         print(merged_data)
-        graficoLineas=Code.GraficosEstadisticas_XacoMeterII.graficoLineas(merged_data)
+        graficoLineas=Code.GraficosEstadisticas_XacoMeterII.graficoLineas(merged_data,patrimonio)
         print('ggg')
-        graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircular(merged_data,total)
+        graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircular(merged_data,total,patrimonio)
         print('hhh')
-        graficoBarras=Code.GraficosEstadisticas_XacoMeterII.graficoBarras(merged_data,total)
+        graficoBarras=Code.GraficosEstadisticas_XacoMeterII.graficoBarras(merged_data,patrimonio)
         return render_template('serieTemporal.html', nombre=patrimonio, graficoLineas=graficoLineas, graficoCircular=graficoCircular, graficoBarras=graficoBarras, fechaInicio=primeraFecha, fechaFin=ultimaFecha, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
     
     except Exception as e:
         logging.error(f'{datetime.now()} - {e}')     
         return redirect(url_for('home'))
-    
+
+@app.route('/descargar_csv/<string:patrimonio>/<string:primeraFecha>/<string:ultimaFecha>')
+def descargar_csv(patrimonio, primeraFecha, ultimaFecha):
+    try:
+        conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
+        curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        diccionario=Code.CrearTablasBD_XacoMeterII.sacaDatosPatrimonioDescargar(conn, curs, primeraFecha, ultimaFecha, patrimonio)
+        titulos = ['Patrimonio_Nombre','Patrimonio_Id', 'Tweet_Id', 'Lugar_Id', 'Tweet_Idioma', 'Tweet_Texto', 
+                    'Usuario_Username', 'Usuario_Verificado',
+                    'Retweet_Numero', 'Like_Numero', 'Reply_Numero', 'Tweet_FechaCreación', 'Borrado']
+        df = pd.DataFrame(diccionario, columns=titulos)
+        df['Fechas'] = pd.to_datetime(df['Tweet_FechaCreación'])
+        response = make_response(df.to_csv(index=False, encoding='utf-8'))
+        response.headers["Content-Disposition"] = "attachment; filename=patrimonio.csv"
+        response.headers["Content-Type"] = "text/csv"
+        return response
+    except Exception as e:
+        logging.error(f'{datetime.now()} - {e}')
+        return redirect(url_for('home'))
+        
 @app.route('/logErrores')
 def LogErrores():
     try:

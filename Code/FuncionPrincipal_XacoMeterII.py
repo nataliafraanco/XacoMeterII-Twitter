@@ -9,13 +9,12 @@ def auth():
 def accederEncabezados(bearer_token):
     return {"Authorization": "Bearer {}".format(bearer_token)}
 
-def solicitudURL(palabraClave, max_results, fecha, fechaFin):
+def solicitudURL(palabraClave, fecha, fechaFin):
     
     endpointUrl = "https://api.twitter.com/2/tweets/search/all"
 
     # Definir los parámetros que queremos obtener de la API de Twitter
     parametrosBusqueda = {'query': palabraClave,
-                    'max_results': max_results,
                     'start_time': fecha,
                     'end_time': fechaFin,
                     'expansions': 'author_id,geo.place_id',
@@ -50,8 +49,7 @@ def funcionPrincipal(PalabraClave, fecha, fechaFin):
     bearer_token = auth()
     headers = accederEncabezados(bearer_token)
     keyword = PalabraClave
-    max_results = 500
-    url = solicitudURL(keyword, max_results, fecha, fechaFin)
+    url = solicitudURL(keyword, fecha, fechaFin)
     dict_tweets = conexionEndpoint(url[0], headers, url[1])
     return dict_tweets
         
