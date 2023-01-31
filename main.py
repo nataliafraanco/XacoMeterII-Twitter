@@ -252,7 +252,7 @@ def descargar_csv(patrimonio, primeraFecha, ultimaFecha):
         df = pd.DataFrame(diccionario, columns=titulos)
         df['Fechas'] = pd.to_datetime(df['Tweet_FechaCreación'])
         response = make_response(df.to_csv(index=False, encoding='utf-8'))
-        response.headers["Content-Disposition"] = "attachment; filename=patrimonio.csv"
+        response.headers["Content-Disposition"] = f"attachment; filename={patrimonio}.csv"
         response.headers["Content-Type"] = "text/csv"
         return response
     except Exception as e:
