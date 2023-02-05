@@ -11,19 +11,19 @@ Para poder utilizar la aplicación en local se necesita tener el archivo .env co
 Se necesita hacer uso de un entorno virtual e instalar en él todas las librerías del archivo requirements.txt.
 Para crear un entorno virtual solo hace falta hacer uso del comando:
 
-$ python -m venv venv
+    $ python -m venv venv
 
 Para activar el entorno:
 
-$.venv\Scripts\activate
+    $.venv\Scripts\activate
 
 Todas las librerías de Python pueden instalarse de la forma:
 
-$ pip install [librería]
+    $ pip install [librería]
 
 Una vez esté preparado el entorno solo se necesita ejecutar el proyecto con:
 
-$ python main.py  
+    $ python main.py  
 
 ## Aplicación desplegada
 
