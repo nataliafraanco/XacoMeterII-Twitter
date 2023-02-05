@@ -31,7 +31,7 @@ def graficoCircular(dfdiccionarioDatos, total, patrimonio):
     total=total[0]-filasPatrimonio
     datos.append(filasPatrimonio)
     datos.append(total)
-    etiquetas=[patrimonio,'Otros patrimonios']
+    etiquetas=['BIC de'+patrimonio,'Otros BICs']
     graficoCircular=go.Layout(title='Porcentaje de tweets de '+patrimonio)
     figuraCircular=go.Figure(data=[go.Pie(labels=etiquetas, values=datos,pull=[0, 0.2])], layout=graficoCircular)
     graficoCircularJSON = json.dumps(figuraCircular, cls=plotly.utils.PlotlyJSONEncoder)
