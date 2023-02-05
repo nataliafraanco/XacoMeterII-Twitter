@@ -15,7 +15,7 @@ Para crear un entorno virtual solo hace falta hacer uso del comando:
 
 Para activar el entorno:
 
-    $.venv\Scripts\activate
+    $ venv\Scripts\activate
 
 Todas las librerías de Python pueden instalarse de la forma:
 
