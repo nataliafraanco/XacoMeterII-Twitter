@@ -5,28 +5,36 @@
     
         <div style="position: absolute; top: 0%; bottom: 0; left: 0%; right: 0%;">
             <div>
-                <select id="selectUbicaciones" class="custom-select"></select>
+                <select class="ubicaciones custom-select"></select>
                 <script>
                     $(document).ready(function(){
-                       
+                        var herramientas=[];
                         var ubicaciones = {{ ubicaciones|tojson }};
-
-                        $('#selectUbicaciones')
-                        .append($("<option selected='selected' value='Selecciona un patrimonio para obtener las estadísticas temporales'></option>")
-                                   .text("Selecciona un patrimonio para obtener las estadísticas temporales"));
                         $.each(ubicaciones, function(ubicacion) {   
-                            $('#selectUbicaciones')
-                                .append($("<option></option>")
-                                           .attr("value", ubicaciones[ubicacion])
-                                           .text(ubicaciones[ubicacion])); 
-                       });
+                            herramientas.push({
+                                id:ubicacion,
+                                text: ubicaciones[ubicacion]
+                            })
+                        })
+
+                        $(".ubicaciones").select2({
+                            language: "es",
+                            data: herramientas
+                          })
+
                     });
-                    $('#selectUbicaciones').on('change', function() {
+                    $('.ubicaciones').on('click', function() {
+                        debugger;
                         var textoSeleccionado=$("#selectUbicaciones option:selected").val();
                         var hrefredirect=textoSeleccionado.split(" ").join("+");
-                        window.location.href = "/estadisticasTemporales/"+ hrefredirect;
+                        window.location.href = "/estadisticasTemporales/"+ hrefredirect
                         
                       });
+                    var $eventSelect = $(".ubicaciones");
+
+                    $eventSelect.on("select2:select", function (e) {
+                        window.location.href = "/estadisticasTemporales/"+ e.params.data.text.replace(/ /g, '+');
+                        });
 
                     
                     </script>
@@ -34,7 +42,7 @@
         </div>
 
         </script>
-        <div style="position: absolute; top: 5%; bottom: 2%; left: 0%; right: 0;">
+        <div style="position: absolute; top: 5%; bottom: 2%; left: 0%; right: 0; margin-top: 10px">
             <div id="map" style="height: 100%"></div>
             <script type="text/javascript">
                 // Crear un mapa y especificar su div contenedor y opciones

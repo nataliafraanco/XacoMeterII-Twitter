@@ -18,7 +18,7 @@ import plotly.offline as plotly
 app = Flask(__name__)
 app.secret_key = 'Clave muy secreta sin revelacion'
 app.config["SESSION_PERMANENT"] = False
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta (minutes = 30)
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta (minutes = 30)
 app.config["SESSION_TYPE"] = "filesystem"
 DEBUG = True
 PORT = 5000
