@@ -429,8 +429,8 @@ h1, .h1 {
 }
 
 .nav-item-divider {
-    height: 5%;
-    margin: 1rem 0;
+    height: 10%;
+    margin: 1rem 1;
     overflow: hidden;
     background-color: rgba(236, 238, 239, 0.3);
 }

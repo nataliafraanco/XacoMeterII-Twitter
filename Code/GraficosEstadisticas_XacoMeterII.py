@@ -41,3 +41,10 @@ def graficoBarras(dfdiccionarioDatos, patrimonio):
     figuraBarras = px.bar(dfdiccionarioDatos, x="Fechas", y=["Reply","Like","Retweet"], title="Metricas públicas por día de "+patrimonio)
     graficoBarrasJSON = json.dumps(figuraBarras, cls=plotly.utils.PlotlyJSONEncoder)
     return graficoBarrasJSON
+
+def graficoGeneral(dfdiccionarioDatos, fechaInicio, fechaFin):
+    figuraBarrasGeneral=px.bar(dfdiccionarioDatos,y='Patrimonio',x='Filas', height=20*dfdiccionarioDatos.shape[0],
+                labels={'Filas':'Tweets','Patrimonio':'BICs'})
+    graficoBarrasGeneralJSON = json.dumps(figuraBarrasGeneral, cls=plotly.utils.PlotlyJSONEncoder)
+    return graficoBarrasGeneralJSON
+    

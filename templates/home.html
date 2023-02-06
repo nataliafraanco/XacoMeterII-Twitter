@@ -16,7 +16,7 @@
                                 text: ubicaciones[ubicacion]
                             })
                         })
-
+                        $(".ubicaciones").prepend("<option selected='selected' disabled='disabled'>Selecciona un patrimonio para buscar sus estadísticas temporales</option>");
                         $(".ubicaciones").select2({
                             language: "es",
                             data: herramientas

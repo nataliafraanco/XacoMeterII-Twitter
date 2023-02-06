@@ -26,22 +26,16 @@ def actualizaTablas(patrimonio, conn, curs):
     index=curs.fetchall() 
     return index 
 
-def ultimaFecha(index, conn, curs):
-    buscaFecha = ('''SELECT MAX(Tweet_CreatedAt) FROM TWEETS_PATRIMONIOS WHERE Patrimonio_Id = %s''')
-    curs.execute(buscaFecha, [index]) 
-    fecha=curs.fetchall() 
-    return fecha
-
 def primeraFecha(conn, curs):
-    buscaFecha = ('''SELECT MIN(Tweet_CreatedAt) FROM TWEETS_PATRIMONIOS''')
+    buscaFecha = ('''SELECT MIN(Tweet_CreatedAt) as date FROM TWEETS_PATRIMONIOS''')
     curs.execute(buscaFecha) 
-    primerafecha=curs.fetchall() 
+    primerafecha=curs.fetchone() 
     return primerafecha
 
-def ultimaFecha2(conn, curs):
-    buscaFecha = ('''SELECT MAX(Tweet_CreatedAt) FROM TWEETS_PATRIMONIOS''')
+def ultimaFecha(conn, curs):
+    buscaFecha = ('''SELECT MAX(Tweet_CreatedAt) as date FROM TWEETS_PATRIMONIOS''')
     curs.execute(buscaFecha) 
-    ultimafecha=curs.fetchall() 
+    ultimafecha=curs.fetchone() 
     return ultimafecha
 
 def primeraFechaEstadisticas(patrimonio, conn, curs):
@@ -51,7 +45,6 @@ def primeraFechaEstadisticas(patrimonio, conn, curs):
                 ''')
     curs.execute(buscaFecha, [patrimonio]) 
     fecha=curs.fetchone() 
-    print(fecha)
     return fecha
 
 
@@ -72,6 +65,18 @@ def sacaDatosPatrimonio(conn, curs, fechaInicio, fechaFin, patrimonio):
                 AND TWEETS_PATRIMONIOS.Borrado = ('False')
                 GROUP BY TWEETS_PATRIMONIOS.Tweet_CreatedAt''')
     variables = patrimonio, fechaInicio, fechaFin
+    curs.execute(sacaDatos, variables)
+    registros = curs.fetchall()
+    return registros
+
+def sacaDatosGenerales(conn, curs, fechaInicio, fechaFin):
+    sacaDatos =('''SELECT Listado_Patrimonios.IDPatrimonio as idPatrimonio, Listado_Patrimonios.Patrimonio as patrimonio, COALESCE(COUNT(tweets_patrimonios.Patrimonio_Id), 0) as filas
+                FROM Listado_Patrimonios
+                LEFT JOIN TWEETS_PATRIMONIOS ON Listado_Patrimonios.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
+                AND TWEETS_PATRIMONIOS.Borrado = 'FALSE'
+                AND (TWEETS_PATRIMONIOS.Tweet_CreatedAt >= %s AND TWEETS_PATRIMONIOS.Tweet_CreatedAt <= %s)
+                GROUP BY Listado_Patrimonios.IDPatrimonio, Listado_Patrimonios.Patrimonio''')
+    variables = fechaInicio, fechaFin
     curs.execute(sacaDatos, variables)
     registros = curs.fetchall()
     return registros
@@ -116,69 +121,6 @@ def cuentaFilas(conn,curs,fechaIni, fechaFin):
     numeroDatos = curs.fetchone()
     return numeroDatos
 
-
-
-def cuentaLikes(conn,curs,fecha, patrimonio):
-    cuentaLikes=('''SELECT Like_Count FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
-                    ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
-                    WHERE LISTADO_PATRIMONIOS.Patrimonio = %s AND
-                    TWEETS_PATRIMONIOS.Tweet_CreatedAt = %s AND TWEETS_PATRIMONIOS.Borrado=('False')''')
-    variables = patrimonio, fecha
-    curs.execute(cuentaLikes, variables)
-    numeroDatos = curs.fetchall()
-    soloValor=[]
-    if numeroDatos==None:
-        numeroDatos=0
-        return numeroDatos
-    else:
-        for dato in numeroDatos:
-            soloValor.append(dato[0])
-        return sum(soloValor)
-
-def cuentaReply(conn,curs,fecha, patrimonio):
-    cuentaReply=('''SELECT Reply_Count FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
-                    ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
-                    WHERE LISTADO_PATRIMONIOS.Patrimonio = %s AND
-                    TWEETS_PATRIMONIOS.Tweet_CreatedAt = %s AND TWEETS_PATRIMONIOS.Borrado=('False')''')
-    variables = patrimonio, fecha 
-    curs.execute(cuentaReply, variables)
-    numeroDatos = curs.fetchall()
-    soloValor=[]
-    if numeroDatos==None:
-        numeroDatos=0
-        return numeroDatos
-    else:
-        for dato in numeroDatos:
-            soloValor.append(dato[0])
-        return sum(soloValor)
-
-def cuentaRetweet(conn,curs,fecha, patrimonio):
-    cuentaRetweet=('''SELECT Retweet_Count FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
-                    ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
-                    WHERE LISTADO_PATRIMONIOS.Patrimonio = %s AND
-                    TWEETS_PATRIMONIOS.Tweet_CreatedAt = %s AND TWEETS_PATRIMONIOS.Borrado=('False')''')
-    variables = patrimonio, fecha
-    curs.execute(cuentaRetweet, variables)
-    numeroDatos = curs.fetchall()
-    soloValor=[]
-    if numeroDatos==None:
-        numeroDatos=0
-        return numeroDatos
-    else:
-        for dato in numeroDatos:
-            soloValor.append(dato[0])
-        return sum(soloValor)
-        
-
-def cuentaFilasPatrimonio(conn,curs,fechaIni, fechaFin, patrimonio):
-    cuentaFilas=('''SELECT COUNT(*) FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
-                    ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
-                    WHERE LISTADO_PATRIMONIOS.Patrimonio = %s AND
-                    TWEETS_PATRIMONIOS.Tweet_CreatedAt BETWEEN %s AND %s AND TWEETS_PATRIMONIOS.Borrado=('False')''')
-    variables = patrimonio, fechaIni, fechaFin 
-    curs.execute(cuentaFilas, variables)
-    numeroDatos = curs.fetchone()
-    return numeroDatos
 
 def insertarDatos(PatrimonioId, diccionarioTweets, patrimonio, conn, curs):
     if ('data' in diccionarioTweets)  :

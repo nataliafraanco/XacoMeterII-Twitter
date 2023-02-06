@@ -100,13 +100,12 @@ def AdministradorActualizar():
             if request.method=='GET':
                 return render_template('admin_Actualizar.html')
             conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
+            curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             total=0
-            curs = conn.cursor()
-            print("entro a recopilar datos 2do plano")
-            ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
+            ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha(conn,curs)['date']
             ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
             fechaActual = datetime.now()
-            fechaActual= fechaActual-timedelta(hours=1)
+            fechaActual= fechaActual-timedelta(days=1)
             cantDatos = int(request.form.get("datos"))
             tiempoCantidad = int(request.form.get("tiempoCantidad"))
             tiempoDia = int(request.form.get("tiempoDia"))
@@ -133,6 +132,7 @@ def AdministradorCrear():
             if request.method=='GET':
                 return render_template('admin_Crear.html')
             conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
+            curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             fechaElegida = request.form.get("fecha")
             cantDatos = int(request.form.get("datos"))
             tiempoCantidad = int(request.form.get("tiempoCantidad"))
@@ -140,12 +140,11 @@ def AdministradorCrear():
             partes=fechaElegida.split("-")
             fechaOrdenada="/".join(reversed(partes))
             fechaElegida=datetime.strptime(fechaOrdenada,"%d/%m/%Y")
-            curs = conn.cursor()
             #Hay varias opciones: la base de datos tiene datos y se pueden recuperar o no existen datos
-            primeraFecha=Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)[0][0]
-            ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFecha2(conn,curs)[0][0]
+            primeraFecha=Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)['date']
+            ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFecha(conn,curs)['date']
             fechaActual = datetime.now()
-            fechaActual= fechaActual-timedelta(hours=1)
+            fechaActual= fechaActual-timedelta(days=1)
             #Si no existen datos se crean de cero:
 
             if primeraFecha==None:
@@ -235,6 +234,32 @@ def estadisticasTemporales(patrimonio):
         print('hhh')
         graficoBarras=Code.GraficosEstadisticas_XacoMeterII.graficoBarras(merged_data,patrimonio)
         return render_template('serieTemporal.html', nombre=patrimonio, graficoLineas=graficoLineas, graficoCircular=graficoCircular, graficoBarras=graficoBarras, fechaInicio=primeraFecha, fechaFin=ultimaFecha, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
+    
+    except Exception as e:
+        logging.error(f'{datetime.now()} - {e}')     
+        return redirect(url_for('home'))
+    
+@app.route('/estadisticasGenerales')    
+def estadisticasGenerales():
+    try:
+        conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
+        curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        primeraFecha = request.args.get('fechaInicio')
+        ultimaFecha = request.args.get('fechaFin')
+        print(Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs))
+        primeraFechaBD=Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)['date']
+        ultimaFechaBD=Code.CrearTablasBD_XacoMeterII.ultimaFecha(conn,curs)['date']
+        if primeraFecha==None or len(primeraFecha)==None:
+            primeraFecha=primeraFechaBD
+        if ultimaFecha==None or len(ultimaFecha)==None:
+            ultimaFecha=ultimaFechaBD
+        diccionario=Code.CrearTablasBD_XacoMeterII.sacaDatosGenerales(conn, curs, primeraFecha, ultimaFecha)
+        titulos = ['idPatrimonio', 'Patrimonio', 'Filas']
+        df = pd.DataFrame(diccionario, columns=titulos)
+        df.sort_values(by='Patrimonio', ascending=False, inplace=True)
+        print(df)
+        graficoGlobal=Code.GraficosEstadisticas_XacoMeterII.graficoGeneral(df, primeraFecha, ultimaFecha)
+        return render_template('serieTemporalGeneral.html', graficoGeneral=graficoGlobal, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
     
     except Exception as e:
         logging.error(f'{datetime.now()} - {e}')     

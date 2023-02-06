@@ -27,7 +27,8 @@ def OperacionesBD(id, patrimonio, diccionarioBusqueda, primeraFecha, ultimaFecha
 
 def buclePatrimonios(primeraFecha,ultimaFecha,conn,curs, total, cantDatos, tiempoCantidad,tiempoDia):
     diccionarioBusqueda = Code.Busqueda_XacoMeterII.palabrasClave()
-    print("Entro aquñi bucle patrimonios")
+    if (ultimaFecha-primeraFecha).days==0:
+        return 0
     for x, y in diccionarioBusqueda.items():
             index = Code.CrearTablasBD_XacoMeterII.actualizaTablas(x,conn,curs)[0][0]
             total = OperacionesBD(index, x, y, primeraFecha,ultimaFecha, total,conn,curs,cantDatos, tiempoCantidad,tiempoDia)
