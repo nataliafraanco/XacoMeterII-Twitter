@@ -209,17 +209,14 @@ def estadisticasTemporales(patrimonio):
         patrimonio = str(patrimonio.replace('+',' '))
         primeraFecha = request.args.get('fechaInicio')
         ultimaFecha = request.args.get('fechaFin')
-        primeraFechaBD=Code.CrearTablasBD_XacoMeterII.primeraFechaEstadisticas(patrimonio,conn,curs)['date']
-        ultimaFechaBD=Code.CrearTablasBD_XacoMeterII.ultimaFechaEstadisticas(patrimonio,conn,curs)['date']
+        primeraFechaBD=Code.CrearTablasBD_XacoMeterII.primeraFechaEstadisticas(conn,curs)['date']
+        ultimaFechaBD=Code.CrearTablasBD_XacoMeterII.ultimaFechaEstadisticas(conn,curs)['date']
         if primeraFecha==None or len(primeraFecha)==None:
             primeraFecha=primeraFechaBD
         if ultimaFecha==None or len(ultimaFecha)==None:
             ultimaFecha=ultimaFechaBD
-        print(primeraFecha)
-        print(ultimaFecha)
         diccionario=Code.CrearTablasBD_XacoMeterII.sacaDatosPatrimonio(conn, curs, primeraFecha, ultimaFecha, patrimonio)
         total=Code.CrearTablasBD_XacoMeterII.cuentaFilasTotales(conn, curs)
-        print(total)
         date_range = pd.date_range(primeraFecha, ultimaFecha)
         date_range_df = pd.DataFrame({'Fechas': date_range})
         titulos = ['Fechas', 'Retweet', 'Like', 'Reply', 'filas']
@@ -245,21 +242,22 @@ def estadisticasGenerales():
         conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
         curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         primeraFecha = request.args.get('fechaInicio')
+        print(primeraFecha)
         ultimaFecha = request.args.get('fechaFin')
-        print(Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs))
-        primeraFechaBD=Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)['date']
-        ultimaFechaBD=Code.CrearTablasBD_XacoMeterII.ultimaFecha(conn,curs)['date']
+        primeraFechaBD=Code.CrearTablasBD_XacoMeterII.primeraFechaEstadisticas(conn,curs)['date']
+        ultimaFechaBD=Code.CrearTablasBD_XacoMeterII.ultimaFechaEstadisticas(conn,curs)['date']
         if primeraFecha==None or len(primeraFecha)==None:
             primeraFecha=primeraFechaBD
         if ultimaFecha==None or len(ultimaFecha)==None:
             ultimaFecha=ultimaFechaBD
+        print(primeraFecha)
+        print(ultimaFecha)
         diccionario=Code.CrearTablasBD_XacoMeterII.sacaDatosGenerales(conn, curs, primeraFecha, ultimaFecha)
         titulos = ['idPatrimonio', 'Patrimonio', 'Filas']
         df = pd.DataFrame(diccionario, columns=titulos)
         df.sort_values(by='Patrimonio', ascending=False, inplace=True)
-        print(df)
         graficoGlobal=Code.GraficosEstadisticas_XacoMeterII.graficoGeneral(df, primeraFecha, ultimaFecha)
-        return render_template('serieTemporalGeneral.html', graficoGeneral=graficoGlobal, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
+        return render_template('serieTemporalGeneral.html', graficoGeneral=graficoGlobal,fechaInicio=primeraFecha, fechaFin=ultimaFecha, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
     
     except Exception as e:
         logging.error(f'{datetime.now()} - {e}')     

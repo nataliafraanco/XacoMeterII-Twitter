@@ -38,22 +38,22 @@ def ultimaFecha(conn, curs):
     ultimafecha=curs.fetchone() 
     return ultimafecha
 
-def primeraFechaEstadisticas(patrimonio, conn, curs):
+def primeraFechaEstadisticas(conn, curs):
     buscaFecha = ('''SELECT MIN(Tweet_CreatedAt) as date
                   FROM TWEETS_PATRIMONIOS 
                   WHERE TWEETS_PATRIMONIOS.Borrado=False
                 ''')
-    curs.execute(buscaFecha, [patrimonio]) 
+    curs.execute(buscaFecha) 
     fecha=curs.fetchone() 
     return fecha
 
 
-def ultimaFechaEstadisticas(patrimonio, conn, curs):
+def ultimaFechaEstadisticas(conn, curs):
     buscaFecha = ('''SELECT MAX(Tweet_CreatedAt) as date
                   FROM TWEETS_PATRIMONIOS 
                   WHERE TWEETS_PATRIMONIOS.Borrado=False
                 ''')
-    curs.execute(buscaFecha, [patrimonio]) 
+    curs.execute(buscaFecha) 
     fecha=curs.fetchone() 
     return fecha
 

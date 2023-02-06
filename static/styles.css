@@ -135,8 +135,7 @@ h1, .h1 {
 }
 
 .dashboard-nav {
-    min-width: 17.5%;
-    max-width: 17.5%;
+    min-width: 238px;
     position: fixed;
     left: 0;
     top: 0;
@@ -261,6 +260,7 @@ h1, .h1 {
 .active {
     background: rgba(0, 0, 0, 0.1);
 }
+
 .dropdown-menu.show {
     background: rgba(243, 233, 88, 0.911);
 
@@ -352,6 +352,11 @@ h1, .h1 {
   #back-button {
     text-align: left;
   }
+  .dropdown-menu {
+    width: 80%;
+  }
+  
+  
 .dashboard-nav-dropdown-menu {
     display: none;
     -webkit-box-orient: vertical;
@@ -364,7 +369,7 @@ h1, .h1 {
     color: #443ea2;
 }
 .dashboard-nav-dropdown-item {
-    min-height: 30%;
+    min-height: 10%;
     padding: 5% 15% 5% 30%;
     display: -webkit-box;
     display: -webkit-flex;
@@ -436,7 +441,7 @@ h1, .h1 {
 }
 nav ul {
     display: none;
-    position: absolute;
+    position: relative;
     background-color: #fff;
     min-width: 20%;
     box-shadow: 0% 5% 10% 0% rgba(0,0,0,0.2);
@@ -462,9 +467,9 @@ nav ul li:hover {
     background-color: rgba(245, 242, 97, 0.72);
 }
 
-@media (min-width: 80%) {
+@media (min-width: 992px) {
     .dashboard-app {
-        margin-left: 0%;
+        margin-left: 238px;
     }
 
     .dashboard-compact .dashboard-app {
@@ -473,29 +478,18 @@ nav ul li:hover {
 }
 
 
-@media (max-width: 80%) {
+@media (max-width: 768px) {
     .dashboard-content {
-        padding: 15% 0%;
+        padding: 15px 0px;
     }
 }
 
-@media (max-width: 20%) {
+@media (max-width: 992px) {
     .dashboard-nav {
-        display: none;
-        position: fixed;
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
-        z-index: 1070;
-    }
-
-    .dashboard-nav.mobile-show {
-        display: block;
+        font-size: smaller;
     }
 }
-
-@media (max-width: 15%) {
+@media (max-width: 992px) {
     .dashboard-nav header .menu-toggle {
         display: -webkit-box;
         display: -webkit-flex;
@@ -504,9 +498,9 @@ nav ul li:hover {
     }
 }
 
-@media (min-width: 15%) {
+@media (min-width: 992px) {
     .dashboard-toolbar {
-        left: 15%;
+        left: 238px;
     }
 
     .dashboard-compact .dashboard-toolbar {
