@@ -269,6 +269,7 @@ h1, .h1 {
     color: rgba(13, 6, 48, 0.856)
 
 }
+
 .dashboard-nav-dropdown {
     display: -webkit-box;
     display: -webkit-flex;
@@ -466,7 +467,14 @@ nav ul li:hover {
 .home{
     background-color: rgba(245, 242, 97, 0.72);
 }
-
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    color: rgba(243, 226, 77, 0.993);
+    font-size: smaller;
+ }
+ 
 @media (min-width: 992px) {
     .dashboard-app {
         margin-left: 238px;

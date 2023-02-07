@@ -24,8 +24,19 @@
                             <p><input type ="submit" class="btn-primary btn-lg btn-block" value="Buscar datos"/><p/>
                         </div>
                     </form>
+                    {% if error %}
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fa-brands fa-twitter "></i>{{ error }}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
+{% if mensaje %}
+<script>
+    alert("{{ mensaje }}");
+    window.location.href = "{{ url_for('home') }}";
+</script>
+{% endif %}    
 {% endblock %}

@@ -1,12 +1,7 @@
-import matplotlib
-matplotlib.use('Agg')
-from matplotlib.ticker import MaxNLocator
-import matplotlib.pyplot as plt
 import io
 import base64
 from datetime import datetime,timedelta
 import Code.CrearTablasBD_XacoMeterII
-import matplotlib.dates as mdates
 import plotly
 import json
 import plotly.graph_objects as go
