@@ -12,7 +12,7 @@ import plotly.express as px
 def graficoLineas(dfdiccionarioDatos,patrimonio):
     fechas = dfdiccionarioDatos['Fechas'].to_numpy()
     print(fechas)
-    filas = dfdiccionarioDatos['filas'].to_numpy()
+    filas = dfdiccionarioDatos['Filas'].to_numpy()
     print(filas)
     graficoLineas=go.Layout(title='Tweets por día de '+patrimonio)
     figuraLineas=go.Figure(data=[go.Scatter(x=fechas,y=filas)], layout=graficoLineas)
@@ -21,7 +21,7 @@ def graficoLineas(dfdiccionarioDatos,patrimonio):
 
 def graficoCircular(dfdiccionarioDatos, total, patrimonio):
     datos=[]
-    filasPatrimonio = sum(dfdiccionarioDatos['filas'].to_numpy())
+    filasPatrimonio = sum(dfdiccionarioDatos['Filas'].to_numpy())
     print(filasPatrimonio)
     total=total[0]-filasPatrimonio
     datos.append(filasPatrimonio)
@@ -41,5 +41,29 @@ def graficoGeneral(dfdiccionarioDatos, fechaInicio, fechaFin):
     figuraBarrasGeneral=px.bar(dfdiccionarioDatos,y='Patrimonio',x='Filas', height=20*dfdiccionarioDatos.shape[0],
                 labels={'Filas':'Tweets','Patrimonio':'BICs'})
     graficoBarrasGeneralJSON = json.dumps(figuraBarrasGeneral, cls=plotly.utils.PlotlyJSONEncoder)
+    return graficoBarrasGeneralJSON
+    
+def Sentiment_Analysis(dfdiccionarioDatos):
+    filasPatrimonio = sum(dfdiccionarioDatos['Filas'].to_numpy())
+    sentimientoTotal = float(sum(dfdiccionarioDatos['Sentimiento'].to_numpy()))
+    sentimientoMedio=0
+    if filasPatrimonio!=0:
+        sentimientoMedio = sentimientoTotal/filasPatrimonio
+    analisisSentimiento=go.Layout(title='Análisis de sentimientos')
+    figuraSentimientos = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = sentimientoMedio,
+        mode = "gauge+number+delta",
+        gauge = {'axis': {'range': [None, 1], 
+                'tickcolor': "blue"}, 
+                'bar': {'color': "darkblue"},
+                'steps' : [
+                    {'range': [0, 0.2], 'color': "red"},
+                    {'range': [0.2, 0.4], 'color': "salmon"},
+                    {'range': [0.4, 0.6], 'color': "yellow"},
+                    {'range': [0.6, 0.8], 'color': "lightgreen"},
+                    {'range': [0.8, 1], 'color': "green"}]
+               }), layout=analisisSentimiento)
+    graficoBarrasGeneralJSON = json.dumps(figuraSentimientos, cls=plotly.utils.PlotlyJSONEncoder)
     return graficoBarrasGeneralJSON
     

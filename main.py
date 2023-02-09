@@ -6,6 +6,7 @@ import Code.Destinos_XacoMeterII
 import Code.Busqueda_XacoMeterII
 import Code.CrearTablasBD_XacoMeterII
 import Code.GraficosEstadisticas_XacoMeterII
+import Code.SentimentAnalysis_XacoMeterII
 import logging
 import psycopg2
 import psycopg2.extras
@@ -104,27 +105,35 @@ def AdministradorActualizar():
             total=0
             ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha(conn,curs)['date']
             ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
-            fechaActual = datetime.now()
+            fechaActual = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
             fechaActual= fechaActual-timedelta(days=1)
             cantDatos = int(request.form.get("datos"))
             tiempoCantidad = int(request.form.get("tiempoCantidad"))
             tiempoDia = int(request.form.get("tiempoDia"))
             Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
-            flash ("La base de datos ha sido actualizada")
             conn.commit()
+            Code.SentimentAnalysis_XacoMeterII.SentimentAnalysisPatrimonio(conn, curs)
             curs.close()
             conn.close()
-            
-            return redirect (url_for('home'))         
+            mensaje='La base de datos ha sido actualizada'
+            return render_template('admin_Actualizar.html', mensaje=mensaje)       
         else:
             return redirect (url_for('Login'))
         
     except Exception as e:
-        flash ("La base de datos no ha sido actualizada")
-        logging.error(f'{datetime.now()} - {e}')     
-        return redirect(url_for('home'))
-    
-
+            if e.args[0] == 400:
+                mensaje = 'Twitter - Solicitud no valida'    
+            elif e.args[0] == 401:
+                mensaje = 'Twitter - Error de autenticacion'
+            elif e.args[0] == 403:
+                mensaje = 'Twitter - Acceso denegado'
+            elif e.args[0] == 429:
+                mensaje = 'Twitter - Solicitudes permitidas superadas'
+            else:
+                mensaje = 'Error de servidor'
+            logging.error(f'{datetime.now()} ' + mensaje)
+            return render_template('admin_Actualizar.html', error=mensaje)
+ 
 @app.route('/Administrador/CrearBaseDeDatos',methods = ['GET','POST'])
 def AdministradorCrear():
     try:
@@ -158,6 +167,7 @@ def AdministradorCrear():
                         time.sleep(tiempoCantidad)
                         total=0
                 conn.commit()
+                Code.SentimentAnalysis_XacoMeterII.SentimentAnalysisPatrimonio(conn, curs)
                 curs.close()
                 conn.close() 
             else:    
@@ -171,6 +181,7 @@ def AdministradorCrear():
                     Code.CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
                     Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
                     conn.commit()
+                    Code.SentimentAnalysis_XacoMeterII.SentimentAnalysisPatrimonio(conn, curs)
                     curs.close()
                     conn.close()   
                     
@@ -180,6 +191,7 @@ def AdministradorCrear():
                     Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
                     Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
                     conn.commit()
+                    Code.SentimentAnalysis_XacoMeterII.SentimentAnalysisPatrimonio(conn, curs)
                     curs.close()
                     conn.close()
 
@@ -189,17 +201,29 @@ def AdministradorCrear():
                     Code.CrearTablasBD_XacoMeterII.borradoTablas(ultimaFecha,fechaElegida,conn,curs)
                     Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
                     conn.commit()
+                    Code.SentimentAnalysis_XacoMeterII.SentimentAnalysisPatrimonio(conn, curs)
                     curs.close()
                     conn.close()
-            flash('La base de datos ha sido creada correctamente')
-            return redirect(url_for('AdministradorOpciones'))
+                    
+            mensaje='La base de datos ha sido creada'
+            return render_template('admin_Crear.html', mensaje=mensaje)       
 
         else:
             return redirect (url_for('Login'))
         
     except Exception as e:
-        logging.error(f'{datetime.now()} - {e}')     
-        return redirect(url_for('home'))
+            if e.args[0] == 400:
+                mensaje = 'Twitter - Solicitud no valida'    
+            elif e.args[0] == 401:
+                mensaje = 'Twitter - Error de autenticacion'
+            elif e.args[0] == 403:
+                mensaje = 'Twitter - Acceso denegado'
+            elif e.args[0] == 429:
+                mensaje = 'Twitter - Solicitudes permitidas superadas'
+            else:
+                mensaje = 'Error de servidor'
+            logging.error(f'{datetime.now()} ' + mensaje)
+            return render_template('admin_Crear.html', error=mensaje)
 
 @app.route('/estadisticasTemporales/<string:patrimonio>')    
 def estadisticasTemporales(patrimonio):
@@ -217,24 +241,29 @@ def estadisticasTemporales(patrimonio):
             ultimaFecha=ultimaFechaBD
         diccionario=Code.CrearTablasBD_XacoMeterII.sacaDatosPatrimonio(conn, curs, primeraFecha, ultimaFecha, patrimonio)
         total=Code.CrearTablasBD_XacoMeterII.cuentaFilasTotales(conn, curs)
-        date_range = pd.date_range(primeraFecha, ultimaFecha)
+        date_range = pd.date_range(primeraFecha, ultimaFecha, periods=None, freq='D')
         date_range_df = pd.DataFrame({'Fechas': date_range})
-        titulos = ['Fechas', 'Retweet', 'Like', 'Reply', 'filas']
+        titulos = ['Fechas', 'Retweet', 'Like', 'Reply', 'Filas', 'Sentimiento']
         df = pd.DataFrame(diccionario, columns=titulos)
         df['Fechas'] = pd.to_datetime(df['Fechas'])
         merged_data = pd.merge(df, date_range_df, on='Fechas', how='right')
         merged_data = merged_data.fillna(0)
+        #Code.CrearTablasBD_XacoMeterII.crearColumnaSentiment_Analysis(conn, curs)
+        #Code.SentimentAnalysis_XacoMeterII.SentimentAnalysis(conn, curs)
         print(merged_data)
         graficoLineas=Code.GraficosEstadisticas_XacoMeterII.graficoLineas(merged_data,patrimonio)
         print('ggg')
         graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircular(merged_data,total,patrimonio)
         print('hhh')
         graficoBarras=Code.GraficosEstadisticas_XacoMeterII.graficoBarras(merged_data,patrimonio)
-        return render_template('serieTemporal.html', nombre=patrimonio, graficoLineas=graficoLineas, graficoCircular=graficoCircular, graficoBarras=graficoBarras, fechaInicio=primeraFecha, fechaFin=ultimaFecha, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
+        sentimentAnalysis=Code.GraficosEstadisticas_XacoMeterII.Sentiment_Analysis(merged_data)
+        return render_template('serieTemporal.html', nombre=patrimonio, graficoLineas=graficoLineas, graficoCircular=graficoCircular, graficoBarras=graficoBarras, sentimentAnalysis=sentimentAnalysis, fechaInicio=primeraFecha, fechaFin=ultimaFecha, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
     
     except Exception as e:
+        mensaje='No hay datos'
         logging.error(f'{datetime.now()} - {e}')     
-        return redirect(url_for('home'))
+        logging.error(f'{datetime.now()} ' + mensaje)
+        return render_template('home.html', error=mensaje)
     
 @app.route('/estadisticasGenerales')    
 def estadisticasGenerales():
@@ -260,8 +289,10 @@ def estadisticasGenerales():
         return render_template('serieTemporalGeneral.html', graficoGeneral=graficoGlobal,fechaInicio=primeraFecha, fechaFin=ultimaFecha, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
     
     except Exception as e:
+        mensaje='No hay datos'
         logging.error(f'{datetime.now()} - {e}')     
-        return redirect(url_for('home'))
+        logging.error(f'{datetime.now()} ' + mensaje)
+        return render_template('home.html', error=mensaje)
 
 @app.route('/descargar_csv/<string:patrimonio>/<string:primeraFecha>/<string:ultimaFecha>')
 def descargar_csv(patrimonio, primeraFecha, ultimaFecha):
@@ -282,15 +313,6 @@ def descargar_csv(patrimonio, primeraFecha, ultimaFecha):
         logging.error(f'{datetime.now()} - {e}')
         return redirect(url_for('home'))
         
-@app.route('/logErrores')
-def LogErrores():
-    try:
-        if 'identificado' in session:
-            return send_file('errores.log', attachment_file='errores.log')
-        else:
-            return redirect(url_for('home'))
-    except:
-        return redirect(url_for('home'))
 
 class ExceptionFilter(logging.Filter):
     def filter(self, record):
@@ -303,8 +325,8 @@ logging.getLogger().addHandler(file_handler)
 
 @app.errorhandler(Exception)
 def handle_generic_error(error):
-    logging.error(f'{datetime.now()} - APP ERROR - {error}')
-    return '<script>alert("Ha ocurrido un error en la aplicacion");</script>', 500
+        logging.error(f'{datetime.now()} - Error de servidor')
+        return '<script>alert("Error de servidor");</script>', 500
 
 def datosMapa():
     ruta_archivo = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'inventario_01.csv')

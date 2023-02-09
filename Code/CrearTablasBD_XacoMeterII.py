@@ -1,6 +1,8 @@
 from os import remove
 from datetime import date
 import dateutil
+from sentiment_analysis_spanish import sentiment_analysis
+
 def borradoTablas(primeraFecha,ultimaFecha,conn,curs):
     primeraFecha=primeraFecha.date()
     print(primeraFecha)
@@ -58,7 +60,8 @@ def ultimaFechaEstadisticas(conn, curs):
     return fecha
 
 def sacaDatosPatrimonio(conn, curs, fechaInicio, fechaFin, patrimonio):
-    sacaDatos =('''SELECT TWEETS_PATRIMONIOS.Tweet_CreatedAt as date, SUM(TWEETS_PATRIMONIOS.Retweet_Count) as rt, SUM(TWEETS_PATRIMONIOS.Like_Count) as like, SUM(TWEETS_PATRIMONIOS.Reply_Count) as rp, COUNT(*) as filas
+    sacaDatos =('''SELECT TWEETS_PATRIMONIOS.Tweet_CreatedAt as date, SUM(TWEETS_PATRIMONIOS.Retweet_Count) as rt, SUM(TWEETS_PATRIMONIOS.Like_Count) as like, 
+                SUM(TWEETS_PATRIMONIOS.Reply_Count) as rp, COUNT(*) as filas, SUM(TWEETS_PATRIMONIOS.Tweet_SentimentAnalysis) as sentimiento
                 FROM TWEETS_PATRIMONIOS
                 WHERE TWEETS_PATRIMONIOS.Patrimonio_Id = (SELECT IDPatrimonio FROM LISTADO_PATRIMONIOS WHERE Patrimonio = %s) 
                 AND (TWEETS_PATRIMONIOS.Tweet_CreatedAt >= %s AND TWEETS_PATRIMONIOS.Tweet_CreatedAt <= %s)
@@ -70,7 +73,8 @@ def sacaDatosPatrimonio(conn, curs, fechaInicio, fechaFin, patrimonio):
     return registros
 
 def sacaDatosGenerales(conn, curs, fechaInicio, fechaFin):
-    sacaDatos =('''SELECT Listado_Patrimonios.IDPatrimonio as idPatrimonio, Listado_Patrimonios.Patrimonio as patrimonio, COALESCE(COUNT(tweets_patrimonios.Patrimonio_Id), 0) as filas
+    sacaDatos =('''SELECT Listado_Patrimonios.IDPatrimonio as idPatrimonio, Listado_Patrimonios.Patrimonio as patrimonio, 
+                COALESCE(COUNT(tweets_patrimonios.Patrimonio_Id), 0) as filas
                 FROM Listado_Patrimonios
                 LEFT JOIN TWEETS_PATRIMONIOS ON Listado_Patrimonios.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
                 AND TWEETS_PATRIMONIOS.Borrado = 'FALSE'
@@ -84,7 +88,7 @@ def sacaDatosGenerales(conn, curs, fechaInicio, fechaFin):
 def sacaDatosPatrimonioDescargar(conn, curs, fechaInicio, fechaFin, patrimonio):
     sacaDatos =('''SELECT LISTADO_PATRIMONIOS.Patrimonio, Patrimonio_Id, Tweet_Id, Lugar_GeoCoordenadas, Tweet_Lang, Tweet_Texto, 
                     User_Username, User_Verified,
-                    Retweet_Count, Like_Count, Reply_Count, Tweet_CreatedAt, Borrado
+                    Retweet_Count, Like_Count, Reply_Count, Tweet_CreatedAt, Borrado, Tweet_SentimentAnalysis
                 FROM TWEETS_PATRIMONIOS INNER JOIN LISTADO_PATRIMONIOS 
                 ON LISTADO_PATRIMONIOS.IDPatrimonio=TWEETS_PATRIMONIOS.Patrimonio_Id
                 WHERE LISTADO_PATRIMONIOS.Patrimonio = %s
@@ -121,7 +125,10 @@ def cuentaFilas(conn,curs,fechaIni, fechaFin):
     numeroDatos = curs.fetchone()
     return numeroDatos
 
-
+def crearColumnaSentiment_Analysis(conn, curs):
+    curs.execute("ALTER TABLE TWEETS_PATRIMONIOS ADD COLUMN Tweet_SentymentAnalysis decimal")
+    conn.commit()
+    
 def insertarDatos(PatrimonioId, diccionarioTweets, patrimonio, conn, curs):
     if ('data' in diccionarioTweets)  :
         for tweet, usuario in zip (diccionarioTweets['data'], diccionarioTweets['includes']['users']):
@@ -145,7 +152,6 @@ def insertarDatos(PatrimonioId, diccionarioTweets, patrimonio, conn, curs):
                              ON CONFLICT (IDPatrimonio) DO UPDATE SET Patrimonio=(%s);''')
                 variablesPatrimonio = PatrimonioId, patrimonio, patrimonio
                 curs.execute(insertarTablaPatrimonio, variablesPatrimonio)
-     
                 insertarTablaTweets = ('''INSERT INTO TWEETS_PATRIMONIOS
                            (Patrimonio_Id, Tweet_Id, Lugar_GeoCoordenadas, Tweet_Lang, Tweet_Texto, User_Username, User_Verified,
                           Retweet_Count, Like_Count, Reply_Count, Tweet_CreatedAt, Borrado) 

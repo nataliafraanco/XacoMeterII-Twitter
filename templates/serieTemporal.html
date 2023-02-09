@@ -47,11 +47,19 @@
       </div>
     </div>
   </div>
-</div>
-    <div class="container" id="chart-container">
-      <div class="col-md-12 ml-n5">
+<div class="flex-container">
+  <div class="row">
+    <div class="col-md-7 ">
+      <div class="row">
         <div id="graficoBarras"></div>
+      </div>
     </div>
+    <div class="col-md-2 ">
+      <div class="row">
+        <div id="sentimentAnalysis"></div>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="row">
   <div class="col-12 mb-3 ml-3">
@@ -66,6 +74,8 @@
   Plotly.newPlot('graficoLineas', {{ graficoLineas|safe }});
   Plotly.newPlot('graficoCircular', {{ graficoCircular|safe }});
   Plotly.newPlot('graficoBarras', {{ graficoBarras|safe }});
+  Plotly.newPlot('sentimentAnalysis', {{ sentimentAnalysis|safe }});
+  
 </script>
        
 
