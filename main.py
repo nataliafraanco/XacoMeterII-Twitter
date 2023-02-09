@@ -62,7 +62,7 @@ def Login():
                     return redirect(url_for('AdministradorOpciones'))
             else:
                 mensaje="Usuario o clave incorrectos."
-                return render_template('home.html', error=mensaje)
+                return render_template('login.html', error=mensaje)
         curs.close()
         conn.close()
         return render_template('login.html')
