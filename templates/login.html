@@ -27,6 +27,11 @@
                                 Iniciar sesión
                             </button>
                         </form>
+                        {% if error %}
+                        <div class="alert alert-warning" role="alert">
+                            <i class="fa-solid fa-right-to-bracket"></i>{{ error }}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
