@@ -34,21 +34,7 @@
             {% block content %}
             {% endblock %}
             </div>
-          </div>
-
-    
-        <script>
-          {% with mensajes =get_flashed_messages() %}
-          {% if mensajes %}
-            alert("{{ mensajes[0] }}");
-            {% for mensaje in mensajes %}
-              <li>{{ message }}</li>
-          {% endfor %}
-          </ul>
-          {% endif %}
-          {% endwith %}  
-        </script>
-    
+          </div>    
         
 </body>
 </html>

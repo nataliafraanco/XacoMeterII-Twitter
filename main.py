@@ -60,9 +60,12 @@ def Login():
                 if check_password_hash(clavebd, clave):
                     session['identificado'] = True
                     return redirect(url_for('AdministradorOpciones'))
+                else:
+                    mensaje=" Usuario o clave incorrectos."
+                    return render_template('login.html', error=mensaje)
             else:
-                mensaje="Usuario o clave incorrectos."
-                return render_template('home.html', error=mensaje)
+                mensaje=" Usuario o contraseña incorrectos."
+                return render_template('login.html', error=mensaje)
         curs.close()
         conn.close()
         return render_template('login.html')
@@ -122,15 +125,15 @@ def AdministradorActualizar():
         
     except Exception as e:
             if e.args[0] == 400:
-                mensaje = 'Twitter - Solicitud no valida'    
+                mensaje = ' Twitter - Solicitud no valida'    
             elif e.args[0] == 401:
-                mensaje = 'Twitter - Error de autenticacion'
+                mensaje = ' Twitter - Error de autenticacion'
             elif e.args[0] == 403:
-                mensaje = 'Twitter - Acceso denegado'
+                mensaje = ' Twitter - Acceso denegado'
             elif e.args[0] == 429:
-                mensaje = 'Twitter - Solicitudes permitidas superadas'
+                mensaje = ' Twitter - Solicitudes permitidas superadas'
             else:
-                mensaje = 'Error de servidor'
+                mensaje = ' Error de servidor'
             logging.error(f'{datetime.now()} ' + mensaje)
             return render_template('admin_Actualizar.html', error=mensaje)
  
@@ -213,13 +216,13 @@ def AdministradorCrear():
         
     except Exception as e:
             if e.args[0] == 400:
-                mensaje = 'Twitter - Solicitud no valida'    
+                mensaje = ' Twitter - Solicitud no valida'    
             elif e.args[0] == 401:
-                mensaje = 'Twitter - Error de autenticacion'
+                mensaje = ' Twitter - Error de autenticacion'
             elif e.args[0] == 403:
-                mensaje = 'Twitter - Acceso denegado'
+                mensaje = ' Twitter - Acceso denegado'
             elif e.args[0] == 429:
-                mensaje = 'Twitter - Solicitudes permitidas superadas'
+                mensaje = ' Twitter - Solicitudes permitidas superadas'
             else:
                 mensaje = 'Error de servidor'
             logging.error(f'{datetime.now()} ' + mensaje)
@@ -252,9 +255,7 @@ def estadisticasTemporales(patrimonio):
         #Code.SentimentAnalysis_XacoMeterII.SentimentAnalysis(conn, curs)
         print(merged_data)
         graficoLineas=Code.GraficosEstadisticas_XacoMeterII.graficoLineas(merged_data,patrimonio)
-        print('ggg')
         graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircular(merged_data,total,patrimonio)
-        print('hhh')
         graficoBarras=Code.GraficosEstadisticas_XacoMeterII.graficoBarras(merged_data,patrimonio)
         sentimentAnalysis=Code.GraficosEstadisticas_XacoMeterII.Sentiment_Analysis(merged_data)
         return render_template('serieTemporal.html', nombre=patrimonio, graficoLineas=graficoLineas, graficoCircular=graficoCircular, graficoBarras=graficoBarras, sentimentAnalysis=sentimentAnalysis, fechaInicio=primeraFecha, fechaFin=ultimaFecha, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
@@ -302,7 +303,7 @@ def descargar_csv(patrimonio, primeraFecha, ultimaFecha):
         diccionario=Code.CrearTablasBD_XacoMeterII.sacaDatosPatrimonioDescargar(conn, curs, primeraFecha, ultimaFecha, patrimonio)
         titulos = ['Patrimonio_Nombre','Patrimonio_Id', 'Tweet_Id', 'Lugar_Id', 'Tweet_Idioma', 'Tweet_Texto', 
                     'Usuario_Username', 'Usuario_Verificado',
-                    'Retweet_Numero', 'Like_Numero', 'Reply_Numero', 'Tweet_FechaCreación', 'Borrado']
+                    'Retweet_Numero', 'Like_Numero', 'Reply_Numero', 'Tweet_FechaCreación', 'Borrado','Sentimiento']
         df = pd.DataFrame(diccionario, columns=titulos)
         df['Fechas'] = pd.to_datetime(df['Tweet_FechaCreación'])
         response = make_response(df.to_csv(index=False, encoding='utf-8'))
