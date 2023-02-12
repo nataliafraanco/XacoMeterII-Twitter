@@ -61,8 +61,8 @@ def Login():
                     session['identificado'] = True
                     return redirect(url_for('AdministradorOpciones'))
             else:
-                flash("Usuario o clave incorrectos. Vuelva a intentarlo.")
-                return redirect(url_for('home'))
+                mensaje="Usuario o clave incorrectos."
+                return render_template('home.html', error=mensaje)
         curs.close()
         conn.close()
         return render_template('login.html')
