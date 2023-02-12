@@ -60,15 +60,13 @@ def Login():
                 if check_password_hash(clavebd, clave):
                     session['identificado'] = True
                     return redirect(url_for('AdministradorOpciones'))
-            else:
-                mensaje=" Usuario o clave incorrectos."
-                return render_template('login.html', error=mensaje)
                 else:
                     mensaje=" Usuario o clave incorrectos."
                     return render_template('login.html', error=mensaje)
             else:
-                mensaje=" Usuario o contraseña incorrectos."
+                mensaje=" Usuario o clave incorrectos."
                 return render_template('login.html', error=mensaje)
+                
         curs.close()
         conn.close()
         return render_template('login.html')
