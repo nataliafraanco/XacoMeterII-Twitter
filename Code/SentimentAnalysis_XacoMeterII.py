@@ -1,6 +1,7 @@
 from sentiment_analysis_spanish import sentiment_analysis
 
 def SentimentAnalysis(conn,curs):
+    #Crea todos los índices de sentimientos cuando se crea la columna
     sentiment = sentiment_analysis.SentimentAnalysisSpanish()
     curs.execute("SELECT Tweet_Id, Tweet_Texto FROM TWEETS_PATRIMONIOS")
     filas=curs.fetchall()
@@ -13,6 +14,7 @@ def SentimentAnalysis(conn,curs):
         
      
 def SentimentAnalysisPatrimonio(conn,curs):
+    #Crea todos los índices de sentimientos cuando el valor es NULL
     sentiment = sentiment_analysis.SentimentAnalysisSpanish()
     curs.execute("SELECT Tweet_Id, Tweet_Texto FROM TWEETS_PATRIMONIOS WHERE Tweet_SentimentAnalysis is NULL;")
     filas=curs.fetchall()

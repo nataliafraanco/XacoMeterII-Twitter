@@ -54,7 +54,6 @@ def Login():
             query = ('''SELECT * FROM usuarios WHERE username = %s''')
             curs.execute(query, [usuario])    
             datos = curs.fetchone()
-            print(datos)
             if datos:
                 clavebd = datos['password']
                 if check_password_hash(clavebd, clave):
@@ -108,9 +107,8 @@ def AdministradorActualizar():
             curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             total=0
             ultimaFecha = Code.CrearTablasBD_XacoMeterII.ultimaFecha(conn,curs)['date']
-            ultimaFecha=datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day)
+            ultimaFecha=(datetime(ultimaFecha.year, ultimaFecha.month, ultimaFecha.day))+timedelta(days=1)
             fechaActual = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-            fechaActual= fechaActual-timedelta(days=1)
             cantDatos = int(request.form.get("datos"))
             tiempoCantidad = int(request.form.get("tiempoCantidad"))
             tiempoDia = int(request.form.get("tiempoDia"))
@@ -123,7 +121,7 @@ def AdministradorActualizar():
             return render_template('admin_Actualizar.html', mensaje=mensaje)       
         else:
             return redirect (url_for('Login'))
-        
+    #Excepciones personalizadas de Twitter     
     except Exception as e:
             if e.args[0] == 400:
                 mensaje = ' Twitter - Solicitud no valida'    
@@ -157,9 +155,7 @@ def AdministradorCrear():
             primeraFecha=Code.CrearTablasBD_XacoMeterII.primeraFecha(conn,curs)['date']
             ultimaFecha=Code.CrearTablasBD_XacoMeterII.ultimaFecha(conn,curs)['date']
             fechaActual = datetime.now()
-            fechaActual= fechaActual-timedelta(days=1)
             #Si no existen datos se crean de cero:
-
             if primeraFecha==None:
                 index = 1
                 total = 0
@@ -181,7 +177,8 @@ def AdministradorCrear():
             
                 #Si existen datos, para aumentar el rendimiento de la web y no tener que hacer tantas consultas a la API se reutilizan datos de la BBDD
                 if primeraFecha<=fechaElegida<=ultimaFecha:
-                    #Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
+                    ultimaFecha=ultimaFecha+timedelta(days=1)
+                    Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
                     Code.CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
                     Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
                     conn.commit()
@@ -192,6 +189,7 @@ def AdministradorCrear():
                 elif fechaElegida<primeraFecha:
                     total=Code.Destinos_XacoMeterII.buclePatrimonios(fechaElegida,primeraFecha,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
                     conn.commit()
+                    ultimaFecha=ultimaFecha+timedelta(days=1)
                     Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
                     Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
                     conn.commit()
@@ -200,6 +198,7 @@ def AdministradorCrear():
                     conn.close()
 
                 else:
+                    ultimaFecha=ultimaFecha+timedelta(days=1)
                     Code.CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
                     Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
                     Code.CrearTablasBD_XacoMeterII.borradoTablas(ultimaFecha,fechaElegida,conn,curs)
@@ -214,7 +213,7 @@ def AdministradorCrear():
 
         else:
             return redirect (url_for('Login'))
-        
+    #Excepciones personalizadas de Twitter    
     except Exception as e:
             if e.args[0] == 400:
                 mensaje = ' Twitter - Solicitud no valida'    
@@ -252,9 +251,9 @@ def estadisticasTemporales(patrimonio):
         df['Fechas'] = pd.to_datetime(df['Fechas'])
         merged_data = pd.merge(df, date_range_df, on='Fechas', how='right')
         merged_data = merged_data.fillna(0)
-        #Code.CrearTablasBD_XacoMeterII.crearColumnaSentiment_Analysis(conn, curs)
-        #Code.SentimentAnalysis_XacoMeterII.SentimentAnalysis(conn, curs)
-        print(merged_data)
+        #Para crear el un inicio la columna de analisis de sentimientos se realizaron dos funciones:
+            #Code.CrearTablasBD_XacoMeterII.crearColumnaSentiment_Analysis(conn, curs)
+            #Code.SentimentAnalysis_XacoMeterII.SentimentAnalysis(conn, curs)
         graficoLineas=Code.GraficosEstadisticas_XacoMeterII.graficoLineas(merged_data,patrimonio)
         graficoCircular=Code.GraficosEstadisticas_XacoMeterII.graficoCircular(merged_data,total,patrimonio)
         graficoBarras=Code.GraficosEstadisticas_XacoMeterII.graficoBarras(merged_data,patrimonio)
@@ -273,7 +272,6 @@ def estadisticasGenerales():
         conn = psycopg2.connect(host=os.getenv("HOST"),database=os.getenv("DATABASE"),port=os.getenv("PUERTO"),user=os.getenv("USUARIO"),password=os.getenv("CLAVE"))
         curs = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         primeraFecha = request.args.get('fechaInicio')
-        print(primeraFecha)
         ultimaFecha = request.args.get('fechaFin')
         primeraFechaBD=Code.CrearTablasBD_XacoMeterII.primeraFechaEstadisticas(conn,curs)['date']
         ultimaFechaBD=Code.CrearTablasBD_XacoMeterII.ultimaFechaEstadisticas(conn,curs)['date']
@@ -281,8 +279,6 @@ def estadisticasGenerales():
             primeraFecha=primeraFechaBD
         if ultimaFecha==None or len(ultimaFecha)==None:
             ultimaFecha=ultimaFechaBD
-        print(primeraFecha)
-        print(ultimaFecha)
         diccionario=Code.CrearTablasBD_XacoMeterII.sacaDatosGenerales(conn, curs, primeraFecha, ultimaFecha)
         titulos = ['idPatrimonio', 'Patrimonio', 'Filas']
         df = pd.DataFrame(diccionario, columns=titulos)
