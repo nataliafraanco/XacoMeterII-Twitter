@@ -287,8 +287,7 @@ def estadisticasGenerales():
         return render_template('serieTemporalGeneral.html', graficoGeneral=graficoGlobal,fechaInicio=primeraFecha, fechaFin=ultimaFecha, primeraBD=primeraFechaBD, ultimaBD=ultimaFechaBD)
     
     except Exception as e:
-        mensaje='No hay datos'
-        logging.error(f'{datetime.now()} - {e}')     
+        mensaje='No hay datos'     
         logging.error(f'{datetime.now()} ' + mensaje)
         return render_template('home.html', error=mensaje)
 
