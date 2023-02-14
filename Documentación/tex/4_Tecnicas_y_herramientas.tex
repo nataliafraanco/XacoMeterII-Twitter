@@ -1,0 +1,90 @@
+\capitulo{4}{Técnicas y herramientas}
+
+\section{SCRUM}
+Es un técnica de metodología ágil que se utiliza para la organización de un proyecto colaborativo en tareas.\\
+Consiste en marcar una serie de periodos de tiempo y asignar tareas a cumplir con el objetivo de finalizar el proyecto de la manera más eficiente posible.
+SCRUM se basa en llevar a cabo tres acciones claras:
+\begin{enumerate}
+    \item \textbf{Planificación:} se deben marcan las tareas a realizar, priorizando las más importantes.
+    \item \textbf{Sprints:} durante el periodo de tiempo establecido, se deben realizar el mayor número de tareas marcadas en la planificación.
+    \item \textbf{Burn Down:} una vez se finaliza el sprint, se deben visualizar los gráficos que muestren las tareas que se han realizado, con el tiempo que se ha invertido, y analizar si son los resultados que se esperaban, para corregirlos en el siguiente sprint.
+\end{enumerate}
+
+\subsection{GitHub}
+Es una plataforma de código abierto que se utiliza para llevar el control de versiones. Permite almacenar información y código en un repositorio periódicamente para proteger los cambios realizados y que ninguno de ellos se extravíe. Existe una versión de escritorio y otra versión web, en este caso se ha utilizado la segunda opción.
+
+\subsection{Zenhub}
+Extensión para navegadores que complementa las utilidades que ofrece GitHub. Es una manera más visual de llevar a cabo la metodología SCRUM, ya que tiene una fácil asignación de tareas a través de un tablero Kanvan, y facilita crear los gráficos 'Burn Down' correspondientes a los sprints.
+
+\section{Visual Code}
+VS Code es un editor de código fuente de Microsoft que se ha utilizado para realizar el proyecto. Se ha elegido este editor porque facilita la depuración del programa durante su desarrollo, indica los errores de la sintaxis resaltándolos y permite una fácil conexión con el repositorio de GitHub para poder realizar los \textit{pull} y \textit{push} necesarios, así como la sincronización del código en cualquier momento.
+
+\subsection{Python}
+Lenguaje de programación flexible diseñado para ser fácil de leer, utilizado sobre todo para el desarrollo de sofware. Este lenguaje ha sido elegido para el desarrollo del proyecto debido a que ha sido uno de los lenguajes utilizados a lo largo de la carrera y, además, cuenta con varias librerias que facilitan la implementación de gráficos del programa.
+
+\subsection{Flask}
+Flask es un \textit{micro-framework} que permite integrar código Python para facilitar el desarrollo de aplicaciones web de forma sencilla y rápida. Es micro porque incluye solo las herramientas necesarias para el desarrollo del proyecto, pudiendo incluir \textit{plugins} si se considerase necesario.
+
+\section{Microsoft Teams}
+Aplicación de Microsoft 365 diseñada para permitir la comunicación entre usuarios, tanto en modo de chat como en el modo de llamada. Se ha utilizado para la comunicación con los tutores y realizar las reuniones pertinentes en cada sprint.
+
+\section{Overleaf}
+Es un editor de texto libre que permite escribir documentos con \LaTeX y a su vez compilarlos para ver el resultado final del mismo. Es una herramienta que permite la edición de los documentos con varios colaboradores y realizar comentarios que se utilizarán para la revisión de la documentación.
+\subsection{\LaTeX}
+Es un sistema de composición de textos que está pensado de tal manera que el autor debe centrarse más en el texto que en la forma. Sobre todo es utilizado para escribir fórmulas matemáticas, aunque puede ser utilizado en todos los ámbitos.
+
+\section{Heroku}
+Es una plataforma de servicios en la nube (PaaS) que se ha utilizado en este proyecto para desplegar la aplicación de manera sencilla. También se ha utilizado para subir la base de datos a la nube, utilizando Heroku PostgreSQL y que pueda accederse a ella desde la aplicación web y desde la aplicación local.
+
+\section{PostgreSQL}
+Sistema de base de datos relacional orientado a objetos de código abierto. Se ha decidido elegir PostgreSQL entre todas las opciones debido a que es sencilla de usar, se pueden visualizar los datos, es gratuita y Heroku permite su fácil despliegue.
+
+\section{draw.io}
+Aplicación web que permite el diseño de gráficos y diagramas para la explicación del proyecto en la documentación (diagramas de casos de uso, diagramas de secuencias, gráficos de APIs...)
+
+\section{Librerías}
+\subsection{Flask}
+Librería utilizada para utilizar el framework Flask.
+\subsection{Leaflet}
+Librería utilizada para el desarrollo del mapa del inicio de la aplicación. Permite la implementación de mapas dinámicos con marcadores.
+\subsection{Bootstrap}
+Biblioteca de código abierto con la que se pueden diseñar aplicaciones web que permite la adptación de la misma al tamaño de la pantalla del dispositivo utilizado.
+\subsection{Plotly}
+Librería de Python que permite realizar gráficos dinámicos en dos dimensiones a partir de \textit{dataframes}.
+\subsection{Pandas}
+Librería de Python que permite realizar el análisis de datos, así como la manipulación de las mismas en formato de tablas o series.
+\subsection{Werkzeug}
+Librería utilizada para la seguridad de la aplicación, encriptando y desencriptando la contraseña del administrador utilizando el algoritmo \textit{PBKDF2 + SHA-256} para que ésta no sea accesible para usuarios no deseados.
+\subsection{Psycopg2}
+Librería utilizada para realizar la conexión con la base de datos PostgreSQL y poder realizar las operaciones deseadas en la misma.
+\subsection{Dotenv}
+Librería que se encarga de cargar las variables de entorno en el programa.
+\subsection{Dateutil}
+Librería de Python que tiene el fin de ampliar las funcionalidades de \textit{datetime}.
+\subsection{Jinja2}
+Es una de las librerías incluidas en Flask que sirve para generar plantillas HTML.
+\subsection{Requests}
+Biblioteca de Python que facilita el manejo de solicitudes HTTP. En este caso, se ha utilizado para realizar la comunicación con la API de Twitter y recibir la respuesta de la misma en forma de objeto \textit{response}.
+\subsection{Sentiment-analysis-spanish}
+Librería de Python que se ha utilizado para implementar el analisis de sentimientos, de tal manera que evalúa los textos de los tweets entre 0 y 1.
+\begin{table}[ht!]
+    \centering
+    \begin{tabular}{c|c}
+         \hline
+         \textbf{Herramientas} & \textbf{Versión} \\\hline
+         {Flask} &{2.2.2}  \\\hline
+         {Leaflet} &{1.8.0} \\\hline
+         {Bootstrap} &{12.16.1}\\\hline 
+         {Plotly} &{3.6.3}\\\hline
+         {Pandas} &{1.5.2} \\\hline 
+         {Werkzeug} &{9.1.0}  \\\hline
+         {psycopg2} &{2.9.5}\\\hline 
+         {dotenv} &{0.21.0} \\\hline 
+         {dateutil} &{2.8.2} \\\hline 
+         {jinja2} &{3.1.2} \\\hline 
+         {requests} &{2.28.2} \\\hline
+         {sentiment-analysis-spanish}&{0.0.25}\\\hline
+    \end{tabular}
+    \caption{Técnicas y herramientas - Librerías}
+    \label{Técnicas y herramientas - Librerías}
+\end{table}
