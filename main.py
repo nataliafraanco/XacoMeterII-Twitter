@@ -114,7 +114,6 @@ def AdministradorActualizar():
             tiempoDia = int(request.form.get("tiempoDia"))
             Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
             conn.commit()
-            Code.SentimentAnalysis_XacoMeterII.SentimentAnalysisPatrimonio(conn, curs)
             curs.close()
             conn.close()
             mensaje='La base de datos ha sido actualizada'
@@ -182,7 +181,6 @@ def AdministradorCrear():
                     Code.CrearTablasBD_XacoMeterII.borradoTablas(primeraFecha,fechaElegida,conn,curs)
                     Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
                     conn.commit()
-                    Code.SentimentAnalysis_XacoMeterII.SentimentAnalysisPatrimonio(conn, curs)
                     curs.close()
                     conn.close()   
                     
@@ -193,7 +191,6 @@ def AdministradorCrear():
                     Code.Destinos_XacoMeterII.buclePatrimonios(ultimaFecha,fechaActual,conn,curs,total, cantDatos, tiempoCantidad,tiempoDia)
                     Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
                     conn.commit()
-                    Code.SentimentAnalysis_XacoMeterII.SentimentAnalysisPatrimonio(conn, curs)
                     curs.close()
                     conn.close()
 
@@ -204,7 +201,6 @@ def AdministradorCrear():
                     Code.CrearTablasBD_XacoMeterII.borradoTablas(ultimaFecha,fechaElegida,conn,curs)
                     Code.CrearTablasBD_XacoMeterII.quitaBorradoTablas(fechaElegida,fechaActual,conn,curs)
                     conn.commit()
-                    Code.SentimentAnalysis_XacoMeterII.SentimentAnalysisPatrimonio(conn, curs)
                     curs.close()
                     conn.close()
                     

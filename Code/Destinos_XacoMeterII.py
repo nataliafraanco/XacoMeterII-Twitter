@@ -36,4 +36,5 @@ def buclePatrimonios(primeraFecha,ultimaFecha,conn,curs, total, cantDatos, tiemp
             if total == cantDatos:
                 time.sleep(tiempoCantidad)
                 total=0
+    Code.SentimentAnalysis_XacoMeterII.SentimentAnalysisPatrimonio(conn, curs)
     return total
